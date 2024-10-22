@@ -31,11 +31,6 @@ const WeatherDashboardSkeleton = () => {
           </div>
           <div className="bg-gray-200 dark:bg-gray-600 rounded-lg p-4 h-36">
             <div className="h-4 w-1/3 bg-gray-300 dark:bg-gray-600 rounded mb-4" />
-            <div className="grid grid-cols-5 gap-2">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-20 bg-gray-300 dark:bg-gray-600 rounded" />
-              ))}
-            </div>
           </div>
         </div>
 

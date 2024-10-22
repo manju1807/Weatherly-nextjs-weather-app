@@ -13,6 +13,7 @@ import {
 } from '@/store/slices/location-slice';
 import { City } from '@/types/weather';
 import { useDebounce } from '@/hooks/useDebounce';
+import LogoSvg from '@/public/svgs/logo';
 
 const NavBar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -92,8 +93,9 @@ const NavBar = () => {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <span className="text-2xl font-bold text-primary">WeatherApp</span>
+            <div className="flex-shrink-0 flex flex-row items-center justify-between gap-2">
+              <LogoSvg className="w-8 h-8" fill="currentColor" />
+              <span className="text-2xl font-bold">Weatherly</span>
             </div>
           </div>
           <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-end">
