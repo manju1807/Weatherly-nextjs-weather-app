@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base theme */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+
+    /* Temperature & Humidity Chart */
+    --color-temperature: #ff4d4d;
+    --color-humidity: #4da6ff;
+
+    /* Air Pollution Chart */
+    --color-co: #0088fe; /* Blue */
+    --color-no2: #00c49f; /* Teal */
+    --color-o3: #ffbb28; /* Yellow */
+    --color-pm25: #ff8042; /* Orange */
+    --color-pm10: #8884d8; /* Purple */
+    --color-so2: #82ca9d; /* Green */
+
+    /* Chart theme colors (used by shadcn/ui) */
+    --chart-1: 215 70% 58%; /* Blue */
+    --chart-2: 168 84% 39%; /* Teal */
+    --chart-3: 41 89% 58%; /* Yellow */
+    --chart-4: 21 100% 63%; /* Orange */
+    --chart-5: 245 40% 68%; /* Purple */
+    --chart-6: 147 47% 65%; /* Green */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Base theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    /* Temperature & Humidity Chart */
+    --color-temperature: #ff6666;
+    --color-humidity: #66b3ff;
+
+    /* Air Pollution Chart */
+    --color-co: #4da6ff; /* Lighter Blue */
+    --color-no2: #40dbc4; /* Lighter Teal */
+    --color-o3: #ffc84d; /* Lighter Yellow */
+    --color-pm25: #ff9966; /* Lighter Orange */
+    --color-pm10: #a3a1e6; /* Lighter Purple */
+    --color-so2: #9ddbb4; /* Lighter Green */
+
+    /* Chart theme colors for dark mode */
+    --chart-1: 220 70% 60%; /* Blue */
+    --chart-2: 168 70% 55%; /* Teal */
+    --chart-3: 41 80% 65%; /* Yellow */
+    --chart-4: 21 90% 70%; /* Orange */
+    --chart-5: 245 50% 75%; /* Purple */
+    --chart-6: 147 55% 70%; /* Green */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
