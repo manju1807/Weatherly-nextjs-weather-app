@@ -2,40 +2,46 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
-import { ModeToggle } from '../theme-toggle';
-import { Search } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, AppState } from '@/store/index';
-import {
-  searchCitiesThunk,
-  setSelectedCity,
-  fetchWeatherData,
-} from '@/store/slices/location-slice';
+import { ModeToggle } from '@/components/theme-toggle';
+import { Search, MapPin } from 'lucide-react';
 import { City } from '@/types/weather';
 import { useDebounce } from '@/hooks/useDebounce';
 import LogoSvg from '@/public/svgs/logo';
+import { searchCities } from '@/actions/weatherActions';
 
-const NavBar = () => {
-  const dispatch = useDispatch<AppDispatch>();
+interface NavBarProps {
+  onLocationChange: (lat: number, lon: number) => void;
+  onUseCurrentLocation: () => void;
+  isUsingCurrentLocation: boolean;
+}
+
+const NavBar = ({ onLocationChange, onUseCurrentLocation, isUsingCurrentLocation }: NavBarProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [error, setError] = useState<string | null>(null);
+  const [citySuggestions, setCitySuggestions] = useState<City[]>([]);
   const dropdownRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const citySuggestions = useSelector((state: AppState) => {
-    return state.location?.citySuggestions || [];
-  });
+  // Clear search when switching to current location
+  useEffect(() => {
+    if (isUsingCurrentLocation) {
+      setSearchQuery('');
+      setCitySuggestions([]);
+      setIsOpen(false);
+    }
+  }, [isUsingCurrentLocation]);
 
   useEffect(() => {
     const fetchCities = async () => {
       if (debouncedSearchQuery.length > 2) {
         try {
-          await dispatch(searchCitiesThunk(debouncedSearchQuery));
+          const cities = await searchCities(debouncedSearchQuery);
+          setCitySuggestions(cities);
           setIsOpen(true);
           setError(null);
         } catch (err) {
@@ -49,12 +55,11 @@ const NavBar = () => {
     };
 
     fetchCities();
-  }, [debouncedSearchQuery, dispatch]);
+  }, [debouncedSearchQuery]);
 
   const handleCitySelect = async (city: City) => {
     try {
-      await dispatch(setSelectedCity(city));
-      await dispatch(fetchWeatherData({ latitude: city.lat, longitude: city.lon }));
+      onLocationChange(city.lat, city.lon);
       setSearchQuery(`${city.name}, ${city.country}`);
       setIsOpen(false);
       setSelectedIndex(-1);
@@ -100,26 +105,38 @@ const NavBar = () => {
           </div>
           <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-end">
             <div className="max-w-lg w-full lg:max-w-xs relative">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              <div className="relative flex items-center gap-2">
+                <div className="relative flex-1">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                  </div>
+                  <Input
+                    ref={inputRef}
+                    id="search"
+                    name="search"
+                    className="block w-full pl-10 pr-3 py-2 border border-input rounded-md leading-5 bg-background placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                    placeholder="Search for a city..."
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsOpen(true)}
+                    onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+                    onKeyDown={handleKeyDown}
+                    aria-expanded={isOpen}
+                    aria-autocomplete="list"
+                    aria-controls="city-suggestions"
+                  />
                 </div>
-                <Input
-                  ref={inputRef}
-                  id="search"
-                  name="search"
-                  className="block w-full pl-10 pr-3 py-2 border border-input rounded-md leading-5 bg-background placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                  placeholder="Search for a city..."
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsOpen(true)}
-                  onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                  onKeyDown={handleKeyDown}
-                  aria-expanded={isOpen}
-                  aria-autocomplete="list"
-                  aria-controls="city-suggestions"
-                />
+                <button
+                  onClick={() => {
+                    onUseCurrentLocation();
+                  }}
+                  className={`p-2 rounded-md hover:bg-primary/10 ${isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                  title="Use current location"
+                >
+                  <MapPin className="h-5 w-5" />
+                </button>
               </div>
               {isOpen && citySuggestions.length > 0 && (
                 <ul

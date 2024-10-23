@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import StoreProvider from '@/store/store-provider';
 import { ThemeProvider } from '@/components/theme-provider';
-import FetchLocation from '@/lib/fetchLocation';
 
 const inter = localFont({
   src: './fonts/Inter/Inter-VariableFont_opsz,wght.ttf',
@@ -37,7 +35,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: '/favicon.ico',
-    apple: '/icons/apple-touch-icon.png'
+    apple: '/apple-touch-icon.png'
   },
   alternates: {
     languages: {
@@ -86,10 +84,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <StoreProvider>
-            <FetchLocation />
-            {children}
-          </StoreProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>
