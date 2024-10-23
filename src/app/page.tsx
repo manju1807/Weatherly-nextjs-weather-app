@@ -1,97 +1,95 @@
 // WeatherApp.tsx
-
 'use client';
-
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { WeatherData } from '@/types/weather';
 import { fetchWeatherData } from '@/actions/weatherActions';
 import NavBar from '@/components/views/navbar';
 import WeatherDashboard from '@/components/views/dashboard';
 import WeatherDashboardSkeleton from '@/components/views/dashboard-skeleton';
+import Footer from '@/components/views/footer';
 
 export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(
-    null,
-  );
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
   const [isManualSelection, setIsManualSelection] = useState(false);
-  const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');
+  const [unit] = useState<'metric' | 'imperial'>('metric');
+  const isMounted = useRef(true);
 
   const handleGeolocationSuccess = useCallback(
     (position: GeolocationPosition) => {
-      if (!isManualSelection) {
-        console.log('Updating from geolocation');
-        setCoordinates((prev) => {
-          const newLat = position.coords.latitude;
-          const newLon = position.coords.longitude;
-          if (!prev) return { lat: newLat, lon: newLon };
-
-          const latDiff = Math.abs(prev.lat - newLat);
-          const lonDiff = Math.abs(prev.lon - newLon);
-
-          if (latDiff > 0.001 || lonDiff > 0.001) {
-            return { lat: newLat, lon: newLon };
-          }
-          return prev;
+      if (isMounted.current) {
+        setCoordinates({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
         });
       }
     },
-    [isManualSelection],
+    []
   );
 
   const { loading: locationLoading } = useGeolocation({
     timeout: 5000,
     onSuccess: handleGeolocationSuccess,
     onError: () => {
-      if (!isManualSelection) {
-        console.log('Using Bangalore coordinates as fallback');
+      if (!isManualSelection && isMounted.current && !coordinates) {
         setCoordinates({ lat: 12.9716, lon: 77.5946 });
       }
     },
+    enabled: !isManualSelection, // Only enable geolocation when not manually selected
   });
 
   const handleLocationChange = (lat: number, lon: number) => {
-    console.log('Manual location change:', lat, lon);
     setIsManualSelection(true);
     setCoordinates({ lat, lon });
   };
 
+  const handleUseCurrentLocation = useCallback(() => {
+    setIsManualSelection(false);
+    setCoordinates(null); // Reset coordinates to trigger geolocation
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
-      if (!coordinates) return;
+      if (!coordinates || !isMounted.current) return;
 
       try {
         setIsLoading(true);
         setError(null);
-        console.log('Fetching weather for:', coordinates);
         const data = await fetchWeatherData(coordinates.lat, coordinates.lon);
-        setWeatherData(data);
+        if (isMounted.current) {
+          setWeatherData(data);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
+        if (isMounted.current) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
   }, [coordinates]);
 
-  const handleUseCurrentLocation = useCallback(() => {
-    setIsManualSelection(false);
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
   const renderContent = () => {
-    if (locationLoading && !isManualSelection) {
+    if (locationLoading && !isManualSelection && !coordinates) {
       return (
         <div className="flex items-center justify-center flex-1">
           <p className="text-lg">Getting location...</p>
         </div>
       );
     }
-
     if (error) {
       return (
         <div className="flex items-center justify-center flex-1">
@@ -99,11 +97,9 @@ export default function WeatherApp() {
         </div>
       );
     }
-
     if (isLoading || !weatherData) {
       return <WeatherDashboardSkeleton />;
     }
-
     return <WeatherDashboard weatherData={weatherData} unit={unit} />;
   };
 
@@ -115,6 +111,7 @@ export default function WeatherApp() {
         isUsingCurrentLocation={!isManualSelection}
       />
       {renderContent()}
+      <Footer />
     </div>
   );
 }

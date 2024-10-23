@@ -10,6 +10,13 @@ import {
 
 const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
+interface ApiResponse {
+  list: Array<{
+    name: string;
+    sys: { country: string };
+    coord: { lat: number; lon: number };
+  }>;
+}
 
 export async function fetchWeatherData(lat: number, lon: number): Promise<WeatherData> {
   try {
@@ -55,7 +62,7 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
 
 export async function searchCities(query: string): Promise<City[]> {
   try {
-    const response = await axiosInstance.get(`${BASE_URL}/find`, {
+    const response = await axiosInstance.get<ApiResponse>(`${BASE_URL}/find`, {
       params: {
         q: query,
         type: 'like',
@@ -65,7 +72,7 @@ export async function searchCities(query: string): Promise<City[]> {
       },
     });
 
-    return response.data.list.map((city: any) => ({
+    return response.data.list.map((city) => ({
       name: city.name,
       country: city.sys.country,
       lat: city.coord.lat,
