@@ -34,11 +34,11 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         {/* Location and Time Section */}
         <div className="flex justify-between items-start">
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-gray-800 tracking-tight">
+            <h2 className="text-xl font-bold tracking-tight">
               {currentWeather.name}, {currentWeather.sys.country}
             </h2>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-muted-foreground">
                 Today,{' '}
                 {new Date().toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -46,7 +46,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
                   day: 'numeric',
                 })}
               </p>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-muted-foreground">
                 {new Date().toLocaleTimeString('en-US', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -62,18 +62,18 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         {/* Temperature Section */}
         <div className="mb-10">
           <div className="flex items-end">
-            <p className="text-8xl font-bold text-gray-800 tracking-tighter">
+            <p className="text-8xl font-bold tracking-tighter">
               {Math.round(currentWeather.main.temp)}°
             </p>
-            <p className="text-2xl font-bold text-gray-600 mb-2 ml-1">
+            <p className="text-2xl font-bold mb-2 ml-1">
               {unit === 'metric' ? 'C' : 'F'}
             </p>
           </div>
           <div>
-            <p className="text-xl font-semibold text-gray-700">
+            <p className="text-xl font-semibold text-muted-foreground">
               {currentWeather.weather[0].main}
             </p>
-            <p className="text-sm font-medium text-gray-600">
+            <p className="text-sm font-medium text-muted-foreground">
               Feels like {Math.round(currentWeather.main.feels_like)}°
               {unit === 'metric' ? 'C' : 'F'}
             </p>
