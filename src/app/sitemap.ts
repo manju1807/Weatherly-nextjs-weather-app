@@ -1,10 +1,13 @@
 // app/sitemap.ts
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const PROD_URL = 'https://weatherly18.netlify.app';
+const DEV_URL = 'http://localhost:3000';
 
-  const routes = [
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = process.env.NODE_ENV === 'production' ? PROD_URL : DEV_URL;
+
+  return [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -12,6 +15,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
   ];
-
-  return routes;
 }

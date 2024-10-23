@@ -1,18 +1,59 @@
-// WeatherApp.tsx
 'use client';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
 import { WeatherData } from '@/types/weather';
 import { fetchWeatherData } from '@/actions/weatherActions';
 import NavBar from '@/components/views/navbar';
-import WeatherDashboard from '@/components/views/dashboard';
 import WeatherDashboardSkeleton from '@/components/views/dashboard-skeleton';
 import Footer from '@/components/views/footer';
+import { ErrorBoundary } from 'react-error-boundary';
+
+// Lazy load the WeatherDashboard component
+const WeatherDashboard = lazy(() => import('@/components/views/dashboard'));
 
 const DEFAULT_COORDINATES = {
   lat: 12.9762,
   lon: 77.6033,
 };
+
+// Error Fallback Component
+function ErrorFallback({
+  error,
+  resetErrorBoundary,
+}: {
+  error: Error;
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <div
+      role="alert"
+      className="flex flex-col items-center justify-center p-4 text-center"
+    >
+      <h2 className="text-lg font-semibold text-red-600">Something went wrong</h2>
+      <p className="text-sm text-gray-600 mt-2">{error.message}</p>
+      <button
+        onClick={resetErrorBoundary}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        aria-label="Retry loading weather data"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
+
+// Loading component with aria-live for accessibility
+function LoadingIndicator({ message }: { message: string }) {
+  return (
+    <div
+      className="flex items-center justify-center flex-1"
+      role="status"
+      aria-live="polite"
+    >
+      <p className="text-lg">{message}</p>
+    </div>
+  );
+}
 
 export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -26,6 +67,9 @@ export default function WeatherApp() {
   const isMounted = useRef(true);
   const initialLoadDone = useRef(false);
   const fetchController = useRef<AbortController | null>(null);
+
+  // Debounced coordinates update
+  const debouncedCoordinates = useDebounce(coordinates, 500);
 
   const handleGeolocationSuccess = useCallback((position: GeolocationPosition) => {
     if (isMounted.current) {
@@ -47,38 +91,36 @@ export default function WeatherApp() {
     enabled: !isManualSelection && !initialLoadDone.current,
   });
 
-  const handleLocationChange = (lat: number, lon: number) => {
+  const handleLocationChange = useCallback((lat: number, lon: number) => {
     setIsManualSelection(true);
     setCoordinates({ lat, lon });
-  };
+  }, []);
 
   const handleUseCurrentLocation = useCallback(() => {
     setIsManualSelection(false);
     initialLoadDone.current = false;
   }, []);
 
-  // Fetch weather data effect
+  // Fetch weather data effect with debounced coordinates
   useEffect(() => {
-    // Abort previous fetch if it exists
     if (fetchController.current) {
       fetchController.current.abort();
     }
 
-    // Create new abort controller for this fetch
     fetchController.current = new AbortController();
     const currentController = fetchController.current;
 
     const fetchData = async () => {
-      if (!coordinates) return;
+      if (!debouncedCoordinates) return;
       setIsLoading(true);
 
       try {
-        const data = await fetchWeatherData(coordinates.lat, coordinates.lon);
+        const data = await fetchWeatherData(
+          debouncedCoordinates.lat,
+          debouncedCoordinates.lon,
+        );
 
-        // Check if this fetch is still relevant
-        if (currentController.signal.aborted) {
-          return;
-        }
+        if (currentController.signal.aborted) return;
 
         setWeatherData(data);
         setError(null);
@@ -97,13 +139,11 @@ export default function WeatherApp() {
 
     fetchData();
 
-    // Cleanup function
     return () => {
       currentController.abort();
     };
-  }, [coordinates]);
+  }, [debouncedCoordinates]);
 
-  // Component cleanup
   useEffect(() => {
     return () => {
       if (fetchController.current) {
@@ -113,23 +153,22 @@ export default function WeatherApp() {
     };
   }, []);
 
-  // Coordinates update logging
   useEffect(() => {
     initialLoadDone.current = true;
   }, [coordinates]);
 
   const renderContent = () => {
     if (locationLoading && !isManualSelection && !initialLoadDone.current) {
-      return (
-        <div className="flex items-center justify-center flex-1">
-          <p className="text-lg">Getting location...</p>
-        </div>
-      );
+      return <LoadingIndicator message="Getting location..." />;
     }
 
     if (error) {
       return (
-        <div className="flex items-center justify-center flex-1">
+        <div
+          className="flex items-center justify-center flex-1"
+          role="alert"
+          aria-live="assertive"
+        >
           <p className="text-red-500">{error}</p>
         </div>
       );
@@ -139,18 +178,47 @@ export default function WeatherApp() {
       return <WeatherDashboardSkeleton />;
     }
 
-    return <WeatherDashboard weatherData={weatherData} unit={unit} />;
+    return (
+      <Suspense fallback={<WeatherDashboardSkeleton />}>
+        <WeatherDashboard weatherData={weatherData} unit={unit} />
+      </Suspense>
+    );
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      <NavBar
-        onLocationChange={handleLocationChange}
-        onUseCurrentLocation={handleUseCurrentLocation}
-        isUsingCurrentLocation={!isManualSelection}
-      />
-      {renderContent()}
-      <Footer />
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {
+          setError(null);
+          handleUseCurrentLocation();
+        }}
+      >
+        <NavBar
+          onLocationChange={handleLocationChange}
+          onUseCurrentLocation={handleUseCurrentLocation}
+          isUsingCurrentLocation={!isManualSelection}
+        />
+        {renderContent()}
+        <Footer />
+      </ErrorBoundary>
     </div>
   );
+}
+
+// Custom debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }

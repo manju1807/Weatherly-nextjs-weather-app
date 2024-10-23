@@ -2,11 +2,14 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
+// Define font with improved font-display strategy
 const inter = localFont({
   src: './fonts/Inter/Inter-VariableFont_opsz,wght.ttf',
   variable: '--font-inter-regular',
   weight: '100 900',
+  display: 'swap', // Add font-display strategy for better performance
 });
 
 export const metadata: Metadata = {
@@ -78,18 +81,43 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // Add dir attribute for text direction support
+    <html lang="en" dir="ltr">
+      <head>
+        {/* Add viewport meta tag for responsive design */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Add high contrast support */}
+        <meta name="color-scheme" content="light dark" />
+      </head>
       <body
-        className={`${inter.variable} font-[family-name:var(--font-inter)] antialiased`}
+        className={`${inter.variable} font-[family-name:var(--font-inter)] antialiased min-h-screen`}
+        // Keep suppressHydrationWarning only if necessary for theme switching
         suppressHydrationWarning={true}
       >
+        {/* Add skip to main content link for keyboard users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground"
+        >
+          Skip to main content
+        </a>
+
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          // Add forcedTheme prop for users who prefer reduced motion
+          forcedTheme={
+            typeof window !== 'undefined' &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+              ? 'light'
+              : undefined
+          }
         >
-          {children}
+          <main id="main-content" className="min-h-screen">
+            <TooltipProvider>{children}</TooltipProvider>
+          </main>
         </ThemeProvider>
       </body>
     </html>

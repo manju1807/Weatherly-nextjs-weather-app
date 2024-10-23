@@ -24,28 +24,28 @@
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
-
-    /* Temperature & Humidity Chart */
-    --color-temperature: #ff4d4d;
-    --color-humidity: #4da6ff;
-
-    /* Air Pollution Chart */
-    --color-co: #0088fe; /* Blue */
-    --color-no2: #00c49f; /* Teal */
-    --color-o3: #ffbb28; /* Yellow */
-    --color-pm25: #ff8042; /* Orange */
-    --color-pm10: #8884d8; /* Purple */
-    --color-so2: #82ca9d; /* Green */
-
-    /* Chart theme colors (used by shadcn/ui) */
-    --chart-1: 215 70% 58%; /* Blue */
-    --chart-2: 168 84% 39%; /* Teal */
-    --chart-3: 41 89% 58%; /* Yellow */
-    --chart-4: 21 100% 63%; /* Orange */
-    --chart-5: 245 40% 68%; /* Purple */
-    --chart-6: 147 47% 65%; /* Green */
-
     --radius: 0.5rem;
+
+    /* Chart Colors - Light Theme */
+    /* Temperature & Humidity */
+    --color-temperature: 0 100% 65%; /* HSL for #ff4d4d */
+    --color-humidity: 210 100% 65%; /* HSL for #4da6ff */
+
+    /* Air Pollution */
+    --color-co: 210 100% 50%; /* HSL for #0088fe */
+    --color-no2: 168 100% 38%; /* HSL for #00c49f */
+    --color-o3: 45 100% 58%; /* HSL for #ffbb28 */
+    --color-pm25: 21 100% 63%; /* HSL for #ff8042 */
+    --color-pm10: 242 47% 68%; /* HSL for #8884d8 */
+    --color-so2: 147 47% 65%; /* HSL for #82ca9d */
+
+    /* Chart Theme */
+    --chart-1: 215 70% 58%;
+    --chart-2: 168 84% 39%;
+    --chart-3: 41 89% 58%;
+    --chart-4: 21 100% 63%;
+    --chart-5: 245 40% 68%;
+    --chart-6: 147 47% 65%;
   }
 
   .dark {
@@ -70,25 +70,26 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
 
-    /* Temperature & Humidity Chart */
-    --color-temperature: #ff6666;
-    --color-humidity: #66b3ff;
+    /* Chart Colors - Dark Theme */
+    /* Temperature & Humidity */
+    --color-temperature: 0 100% 70%; /* HSL for #ff6666 */
+    --color-humidity: 210 100% 70%; /* HSL for #66b3ff */
 
-    /* Air Pollution Chart */
-    --color-co: #4da6ff; /* Lighter Blue */
-    --color-no2: #40dbc4; /* Lighter Teal */
-    --color-o3: #ffc84d; /* Lighter Yellow */
-    --color-pm25: #ff9966; /* Lighter Orange */
-    --color-pm10: #a3a1e6; /* Lighter Purple */
-    --color-so2: #9ddbb4; /* Lighter Green */
+    /* Air Pollution */
+    --color-co: 210 100% 65%; /* HSL for #4da6ff */
+    --color-no2: 168 70% 55%; /* HSL for #40dbc4 */
+    --color-o3: 45 100% 65%; /* HSL for #ffc84d */
+    --color-pm25: 21 100% 70%; /* HSL for #ff9966 */
+    --color-pm10: 242 50% 77%; /* HSL for #a3a1e6 */
+    --color-so2: 147 55% 74%; /* HSL for #9ddbb4 */
 
-    /* Chart theme colors for dark mode */
-    --chart-1: 220 70% 60%; /* Blue */
-    --chart-2: 168 70% 55%; /* Teal */
-    --chart-3: 41 80% 65%; /* Yellow */
-    --chart-4: 21 90% 70%; /* Orange */
-    --chart-5: 245 50% 75%; /* Purple */
-    --chart-6: 147 55% 70%; /* Green */
+    /* Chart Theme */
+    --chart-1: 220 70% 60%;
+    --chart-2: 168 70% 55%;
+    --chart-3: 41 80% 65%;
+    --chart-4: 21 90% 70%;
+    --chart-5: 245 50% 75%;
+    --chart-6: 147 55% 70%;
   }
 }
 
@@ -96,7 +97,54 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Improve focus styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* High Contrast Mode Adjustments */
+@media (forced-colors: active) {
+  :root {
+    --primary: CanvasText;
+    --primary-foreground: Canvas;
+    --border: CanvasText;
   }
 }
