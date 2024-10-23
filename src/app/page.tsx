@@ -13,22 +13,21 @@ export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(
+    null,
+  );
   const [isManualSelection, setIsManualSelection] = useState(false);
   const [unit] = useState<'metric' | 'imperial'>('metric');
   const isMounted = useRef(true);
 
-  const handleGeolocationSuccess = useCallback(
-    (position: GeolocationPosition) => {
-      if (isMounted.current) {
-        setCoordinates({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        });
-      }
-    },
-    []
-  );
+  const handleGeolocationSuccess = useCallback((position: GeolocationPosition) => {
+    if (isMounted.current) {
+      setCoordinates({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+      });
+    }
+  }, []);
 
   const { loading: locationLoading } = useGeolocation({
     timeout: 5000,

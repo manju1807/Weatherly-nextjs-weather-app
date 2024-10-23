@@ -39,7 +39,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
     }
 
     if (!navigator.geolocation) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         loading: false,
       }));
@@ -62,7 +62,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
     };
 
     const handleError = () => {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         loading: false,
       }));
