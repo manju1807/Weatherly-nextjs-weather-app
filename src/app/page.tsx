@@ -9,16 +9,23 @@ import WeatherDashboard from '@/components/views/dashboard';
 import WeatherDashboardSkeleton from '@/components/views/dashboard-skeleton';
 import Footer from '@/components/views/footer';
 
+const DEFAULT_COORDINATES = {
+  lat: 12.9762,
+  lon: 77.6033,
+};
+
 export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(
-    null,
+  const [isLoading, setIsLoading] = useState(false);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number }>(
+    DEFAULT_COORDINATES,
   );
   const [isManualSelection, setIsManualSelection] = useState(false);
   const [unit] = useState<'metric' | 'imperial'>('metric');
   const isMounted = useRef(true);
+  const initialLoadDone = useRef(false);
+  const fetchController = useRef<AbortController | null>(null);
 
   const handleGeolocationSuccess = useCallback((position: GeolocationPosition) => {
     if (isMounted.current) {
@@ -33,11 +40,11 @@ export default function WeatherApp() {
     timeout: 5000,
     onSuccess: handleGeolocationSuccess,
     onError: () => {
-      if (!isManualSelection && isMounted.current && !coordinates) {
-        setCoordinates({ lat: 12.9716, lon: 77.5946 });
+      if (!isManualSelection && isMounted.current) {
+        setCoordinates(DEFAULT_COORDINATES);
       }
     },
-    enabled: !isManualSelection, // Only enable geolocation when not manually selected
+    enabled: !isManualSelection && !initialLoadDone.current,
   });
 
   const handleLocationChange = (lat: number, lon: number) => {
@@ -47,48 +54,79 @@ export default function WeatherApp() {
 
   const handleUseCurrentLocation = useCallback(() => {
     setIsManualSelection(false);
-    setCoordinates(null); // Reset coordinates to trigger geolocation
+    initialLoadDone.current = false;
   }, []);
 
+  // Fetch weather data effect
   useEffect(() => {
+    // Abort previous fetch if it exists
+    if (fetchController.current) {
+      fetchController.current.abort();
+    }
+
+    // Create new abort controller for this fetch
+    fetchController.current = new AbortController();
+    const currentController = fetchController.current;
+
     const fetchData = async () => {
-      if (!coordinates || !isMounted.current) return;
+      if (!coordinates) return;
+      setIsLoading(true);
 
       try {
-        setIsLoading(true);
-        setError(null);
         const data = await fetchWeatherData(coordinates.lat, coordinates.lon);
-        if (isMounted.current) {
-          setWeatherData(data);
+
+        // Check if this fetch is still relevant
+        if (currentController.signal.aborted) {
+          return;
         }
+
+        setWeatherData(data);
+        setError(null);
       } catch (err) {
-        if (isMounted.current) {
-          setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
-        }
+        if (currentController.signal.aborted) return;
+
+        console.error('Error fetching weather data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
+        setWeatherData(null);
       } finally {
-        if (isMounted.current) {
+        if (!currentController.signal.aborted) {
           setIsLoading(false);
         }
       }
     };
 
     fetchData();
+
+    // Cleanup function
+    return () => {
+      currentController.abort();
+    };
   }, [coordinates]);
 
+  // Component cleanup
   useEffect(() => {
     return () => {
+      if (fetchController.current) {
+        fetchController.current.abort();
+      }
       isMounted.current = false;
     };
   }, []);
 
+  // Coordinates update logging
+  useEffect(() => {
+    initialLoadDone.current = true;
+  }, [coordinates]);
+
   const renderContent = () => {
-    if (locationLoading && !isManualSelection && !coordinates) {
+    if (locationLoading && !isManualSelection && !initialLoadDone.current) {
       return (
         <div className="flex items-center justify-center flex-1">
           <p className="text-lg">Getting location...</p>
         </div>
       );
     }
+
     if (error) {
       return (
         <div className="flex items-center justify-center flex-1">
@@ -96,9 +134,11 @@ export default function WeatherApp() {
         </div>
       );
     }
-    if (isLoading || !weatherData) {
+
+    if (!weatherData) {
       return <WeatherDashboardSkeleton />;
     }
+
     return <WeatherDashboard weatherData={weatherData} unit={unit} />;
   };
 

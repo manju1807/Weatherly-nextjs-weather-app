@@ -8,6 +8,7 @@ import { City } from '@/types/weather';
 import { useDebounce } from '@/hooks/useDebounce';
 import LogoSvg from '@/public/svgs/logo';
 import { searchCities } from '@/actions/weatherActions';
+import { useRouter } from 'next/navigation';
 
 interface NavBarProps {
   onLocationChange: (lat: number, lon: number) => void;
@@ -27,6 +28,7 @@ const NavBar = ({
   const [citySuggestions, setCitySuggestions] = useState<City[]>([]);
   const dropdownRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -97,12 +99,21 @@ const NavBar = ({
     }
   }, [selectedIndex]);
 
+  const handleLogoClick = () => {
+    router.refresh();
+  };
+
   return (
     <nav className="bg-background" role="navigation">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex flex-row items-center justify-between gap-2">
+            <div
+              className="flex-shrink-0 flex flex-row items-center justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleLogoClick}
+              role="button"
+              aria-label="Refresh page"
+            >
               <LogoSvg className="w-8 h-8" fill="currentColor" />
               <span className="text-2xl font-bold">Weatherly</span>
             </div>

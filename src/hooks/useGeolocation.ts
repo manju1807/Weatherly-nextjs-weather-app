@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 const DEFAULT_COORDINATES = {
-  latitude: 12.9716,
-  longitude: 77.5946,
+  latitude: 12.9762,
+  longitude: 77.6033,
 };
 
 interface GeolocationState {
