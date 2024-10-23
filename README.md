@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌤️ Weatherly - Your Ultimate Weather Companion
 
-## Getting Started
+**Weatherly** is a comprehensive weather application that provides real-time updates, forecasts, and detailed weather metrics. It's built with modern web technologies to provide a seamless and engaging user experience.
 
-First, run the development server:
+## 🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* 🌍 Real-time weather updates and forecasts
+* 🌡️ Detailed weather metrics including temperature, humidity, and wind speed
+* 🌆 Air quality monitoring and UV index tracking
+* 🎨 Light/Dark theme support
+* 🌐 Multi-language support
+* 📱 Responsive design for various devices
+* ♿ Accessibility-focused interface
+* 🗺️ Interactive weather maps
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Built With
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* ⚡ **Next.js** - React framework for production
+* ⚛️ **React** - JavaScript library for building user interfaces
+* 📘 **TypeScript** - Typed superset of JavaScript
+* 🎨 **Tailwind CSS** - Utility-first CSS framework
+* 🎭 **Radix UI** - Unstyled, accessible components for React
+* 🖼️ **Lucide React** - Beautiful & consistent icon pack
+* 📊 **Recharts** - Composable charting library for React
+* 🗺️ **React Leaflet** - Maps integration
+* 🌙 **next-themes** - Theme management
+* 🚨 **React Error Boundary** - Error handling
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📈 Development Process
 
-## Learn More
+The development of Weatherly focused on creating a user-friendly interface with robust functionality:
 
-To learn more about Next.js, take a look at the following resources:
+1. 🌍 Implemented core weather tracking features
+2. 🔍 Integrated OpenWeather API for accurate data
+3. 🎨 Developed responsive UI with theme support
+4. 🌐 Added multi-language support
+5. ♿ Implemented comprehensive accessibility features
+6. ⚡ Optimized performance across all devices
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Throughout the development process, I prioritized code quality, accessibility, and user experience.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🏃‍♂️ Running the Project
 
-## Deploy on Vercel
+To run Weatherly locally, follow these steps:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. 📥 Clone the repository to your local machine
+2. 📦 In the project directory, run `npm install` or `yarn` to install dependencies
+3. 🚀 Run `npm run dev` or `yarn dev` to start the development server
+4. 🌐 Open [http://localhost:3000](http://localhost:3000) in your browser
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 Note
+
+This project uses the OpenWeather API for weather data. Ensure you comply with OpenWeather's terms of service when using their API.
+
+### Screenshots
+![Screenshot 1](https://github.com/user-attachments/assets/weather-app-screenshot-1.png)
+![Screenshot 2](https://github.com/user-attachments/assets/weather-app-screenshot-2.png)
+![Screenshot 3](https://github.com/user-attachments/assets/weather-app-screenshot-3.png)
+![Screenshot 4](https://github.com/user-attachments/assets/weather-app-screenshot-4.png)
+![Screenshot 5](https://github.com/user-attachments/assets/weather-app-screenshot-5.png)
+![Screenshot 6](https://github.com/user-attachments/assets/weather-app-screenshot-6.png)
+
+---
+Created with ❤️ by Manjunath R
+🌤️ Weather data provided by OpenWeather API
