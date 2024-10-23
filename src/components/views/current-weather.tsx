@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sun, Cloud, CloudRain, Wind, Droplets, Gauge } from 'lucide-react';
+import { CloudRain, Wind, Droplets, Gauge } from 'lucide-react';
 import { CurrentWeatherResponse, ForecastResponse } from '@/types/weather';
+import { ClearSky, Cloudy, Rainy, Sunny } from '@/public/svgs/weather';
 
 interface CurrentWeatherCardProps {
   currentWeather: CurrentWeatherResponse;
@@ -17,58 +18,76 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   const getWeatherIcon = (main: string) => {
     switch (main.toLowerCase()) {
       case 'clear':
-        return <Sun className="w-16 h-16 text-yellow-400" />;
+        return <Sunny className="w-32 h-32 text-yellow-500 transition-transform hover:scale-105" />;
       case 'clouds':
-        return <Cloud className="w-16 h-16 text-gray-400" />;
+        return <Cloudy className="w-32 h-32 text-gray-500 transition-transform hover:scale-105" />;
       case 'rain':
-        return <CloudRain className="w-16 h-16 text-blue-400" />;
+        return <Rainy className="w-32 h-32 text-blue-500 transition-transform hover:scale-105" />;
       default:
-        return <Sun className="w-16 h-16 text-yellow-400" />;
+        return <ClearSky className="w-32 h-32 text-yellow-400 transition-transform hover:scale-105" />;
     }
   };
 
   return (
-    <Card className="w-full mx-auto">
-      <CardContent className="flex flex-col items-center h-full p-6">
-        <div className="flex justify-between items-center w-full mb-6">
-          <div>
-            <h2 className="text-xl font-semibold">
+    <Card>
+      <CardContent className="p-6">
+        {/* Location and Time Section */}
+        <div className="flex justify-between items-start">
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold text-gray-800 tracking-tight">
               {currentWeather.name}, {currentWeather.sys.country}
             </h2>
-            <p className="text-sm text-muted-foreground">
-              Today,{' '}
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric',
-              })}
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-600">
+                Today,{' '}
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </p>
+              <p className="text-sm font-medium text-gray-600">
+                {new Date().toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </p>
+            </div>
+          </div>
+          <div className="transform transition-transform hover:scale-105 duration-300">
+            {getWeatherIcon(currentWeather.weather[0].main)}
+          </div>
+        </div>
+
+        {/* Temperature Section */}
+        <div className="mb-10">
+          <div className="flex items-end">
+            <p className="text-8xl font-bold text-gray-800 tracking-tighter">
+              {Math.round(currentWeather.main.temp)}°
             </p>
-            <p className="text-sm text-muted-foreground">
-              {new Date().toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+            <p className="text-2xl font-bold text-gray-600 mb-2 ml-1">
+              {unit === 'metric' ? 'C' : 'F'}
             </p>
           </div>
-          {getWeatherIcon(currentWeather.weather[0].main)}
+          <div>
+            <p className="text-xl font-semibold text-gray-700">
+              {currentWeather.weather[0].main}
+            </p>
+            <p className="text-sm font-medium text-gray-600">
+              Feels like {Math.round(currentWeather.main.feels_like)}°
+              {unit === 'metric' ? 'C' : 'F'}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col w-full mb-12">
-          <p className="text-8xl font-bold">
-            {Math.round(currentWeather.main.temp)}°{unit === 'metric' ? 'C' : 'F'}
-          </p>
-          <p className="text-xl">{currentWeather.weather[0].main}</p>
-          <p className="text-sm text-muted-foreground">
-            Feels like {Math.round(currentWeather.main.feels_like)}°
-            {unit === 'metric' ? 'C' : 'F'}
-          </p>
-        </div>
+
+        {/* Weather Details Grid */}
         <div className="grid grid-cols-2 gap-4 w-full">
           <div className="flex items-center ">
             <CloudRain className="w-5 h-5 mr-2 text-blue-400" />
             <span>Rain Chance: {forecast.list[0].pop * 100}%</span>
           </div>
           <div className="flex items-center">
-            <Wind className="w-5 h-5 mr-2 text-gray-400" />
+            <Wind className="w-5 h-5 mr-2 text-blue-400" />
             <span>
               Wind Speed: {Math.round(currentWeather.wind.speed)}{' '}
               {unit === 'metric' ? 'km/h' : 'mph'}
@@ -79,7 +98,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
             <span>Humidity: {currentWeather.main.humidity}%</span>
           </div>
           <div className="flex items-center">
-            <Gauge className="w-5 h-5 mr-2 text-gray-400" />
+            <Gauge className="w-5 h-5 mr-2 text-red-400" />
             <span>Pressure: {currentWeather.main.pressure} mb</span>
           </div>
         </div>

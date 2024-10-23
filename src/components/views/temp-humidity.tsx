@@ -57,7 +57,6 @@ const TooltipContent = memo(
       <div
         className="rounded-lg border bg-background p-2 shadow-sm"
         role="tooltip"
-        aria-live="polite"
       >
         <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-1">
@@ -84,12 +83,20 @@ interface ChartComponentProps {
 }
 
 const ChartComponent = memo(({ chartData, temperatureUnit }: ChartComponentProps) => {
-  const timeFormatter = (time: string) =>
-    new Date(time).toLocaleString([], {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-    });
+
+  const timeFormatter = (timestamp: string) => {
+    try {
+      const date = new Date(parseInt(timestamp));
+      return date.toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+      });
+    } catch (e) {
+      console.error('Error formatting date:', e);
+      return 'Invalid Date';
+    }
+  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -102,7 +109,6 @@ const ChartComponent = memo(({ chartData, temperatureUnit }: ChartComponentProps
             left: 0,
             bottom: 0,
           }}
-          role="application"
           aria-label="Temperature and humidity forecast chart"
         >
           <CartesianGrid vertical={false} />
@@ -152,9 +158,8 @@ const ChartComponent = memo(({ chartData, temperatureUnit }: ChartComponentProps
             stroke="var(--color-temperature)"
             fill="url(#temperatureGradient)"
             fillOpacity={0.4}
-            role="img"
             aria-label="Temperature trend line"
-            isAnimationActive={false}
+            isAnimationActive={true}
           />
           <Area
             yAxisId="humidity"
@@ -163,9 +168,8 @@ const ChartComponent = memo(({ chartData, temperatureUnit }: ChartComponentProps
             stroke="var(--color-humidity)"
             fill="url(#humidityGradient)"
             fillOpacity={0.4}
-            role="img"
             aria-label="Humidity trend line"
-            isAnimationActive={false}
+            isAnimationActive={true}
           />
         </AreaChart>
       </ChartContainer>
@@ -198,7 +202,7 @@ const TemperatureHumidityChart = memo(({ data, unit }: TemperatureHumidityChartP
   const chartData = useMemo(
     (): ChartDataPoint[] =>
       data.list.map((item) => ({
-        time: new Date(item.dt * 1000).toLocaleString(),
+        time: (item.dt * 1000).toString(),
         temperature: Math.round(item.main.temp * 10) / 10,
         humidity: item.main.humidity,
       })),

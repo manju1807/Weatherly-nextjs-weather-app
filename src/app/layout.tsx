@@ -4,12 +4,16 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
-// Define font with improved font-display strategy
-const inter = localFont({
-  src: './fonts/Inter/Inter-VariableFont_opsz,wght.ttf',
-  variable: '--font-inter-regular',
-  weight: '100 900',
-  display: 'swap', // Add font-display strategy for better performance
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -66,13 +70,6 @@ export const metadata: Metadata = {
   },
   applicationName: 'Weatherly',
   category: 'Weather, Forecast, Climate',
-  other: {
-    'mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'default',
-    'theme-color': '#ffffff',
-    'msapplication-TileColor': '#2b5797',
-  },
 };
 
 export default function RootLayout({
@@ -88,32 +85,22 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Add high contrast support */}
         <meta name="color-scheme" content="light dark" />
+        {/* Resource hints for critical third-party resources */}
+        <link rel="preconnect" href="https://api.openweathermap.org" />
+        <link rel="preconnect" href="https://tile.openstreetmap.org" />
+
+        {/* DNS prefetch for non-critical resources */}
+        <link rel="dns-prefetch" href="https://unpkg.com" />
       </head>
       <body
-        className={`${inter.variable} font-[family-name:var(--font-inter)] antialiased min-h-screen`}
-        // Keep suppressHydrationWarning only if necessary for theme switching
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
         suppressHydrationWarning={true}
       >
-        {/* Add skip to main content link for keyboard users */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground"
-        >
-          Skip to main content
-        </a>
-
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          // Add forcedTheme prop for users who prefer reduced motion
-          forcedTheme={
-            typeof window !== 'undefined' &&
-            window.matchMedia('(prefers-reduced-motion: reduce)').matches
-              ? 'light'
-              : undefined
-          }
         >
           <main id="main-content" className="min-h-screen">
             <TooltipProvider>{children}</TooltipProvider>

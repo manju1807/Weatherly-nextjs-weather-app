@@ -19,15 +19,15 @@ interface NavBarProps {
 // Memoize the logo component since it doesn't change
 const Logo = memo(({ onClick }: { onClick: () => void }) => (
   <div
-    className="flex-shrink-0 flex flex-row items-center justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+    className="flex-shrink-0 flex flex-row items-center justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity mr-4 md:mr-0"
     onClick={onClick}
     role="button"
     tabIndex={0}
     onKeyDown={(e) => e.key === 'Enter' && onClick()}
-    aria-label="Refresh page"
+    aria-label="logo"
   >
     <LogoSvg className="w-8 h-8" fill="currentColor" />
-    <span className="text-2xl font-bold">Weatherly</span>
+    <span className="text-md md:text-2xl font-bold md:font-bold ">Weatherly</span>
   </div>
 ));
 Logo.displayName = 'Logo';
@@ -55,9 +55,8 @@ const SearchSuggestions = memo(
         {suggestions.map((city, index) => (
           <li
             key={`${city.name}-${city.lat}-${city.lon}`}
-            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
-              index === selectedIndex ? 'bg-primary/10' : ''
-            }`}
+            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${index === selectedIndex ? 'bg-primary/10' : ''
+              }`}
             onClick={() => onSelect(city)}
             onMouseEnter={() => onMouseEnter(index)}
             role="option"
@@ -256,9 +255,8 @@ const NavBar = ({
                   </div>
                   <button
                     onClick={onUseCurrentLocation}
-                    className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${
-                      isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
-                    }`}
+                    className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
+                      }`}
                     aria-label={`${isUsingCurrentLocation ? 'Using current location' : 'Use current location'}`}
                     aria-pressed={isUsingCurrentLocation}
                   >
