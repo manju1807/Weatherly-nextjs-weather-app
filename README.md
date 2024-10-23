@@ -32,15 +32,16 @@ Throughout the development process, I prioritized code quality, accessibility, a
 To run Weatherly locally, follow these steps:
 1. 📥 Clone the repository to your local machine:
 ```bash
-git clone https://github.com/yourusername/weatherly.git
-cd weatherly
+git clone https://github.com/yourusername/Advanced-weather-app-nextjs.git
+cd Advanced-weather-app-nextjs
 ```
 
 2. 📦 Set up environment variables:
 Create a `.env.local` file in the root directory with the following format:
 ```env
-NEXT_PUBLIC_OPENWEATHER_API_KEY=16b48da87c0b4ddasd88f8a9bd44a69b51d56
-NEXT_PUBLIC_BASE_URL=https://weatherly18.netlify.app/
+Example env:
+NEXT_PUBLIC_OPENWEATHER_API_KEY= 0lh8qVL49XIw3o30fgDPxcIgTjfBfiyE
+NEXT_PUBLIC_BASE_URL= http://localhost:3000
 ```
 > Note: You'll need to obtain an API key from [OpenWeather](https://openweathermap.org/api) to use the weather services.
 
