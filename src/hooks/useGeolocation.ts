@@ -5,7 +5,7 @@ const BANGALORE_COORDINATES = {
   latitude: 12.9716,
   longitude: 77.5946,
   city: 'Bangalore',
-  country: 'IN'
+  country: 'IN',
 };
 
 interface GeolocationState {
@@ -41,7 +41,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: 'Geolocation is not supported. Using default location (Bangalore).',
         loading: false,
@@ -57,8 +57,8 @@ export function useGeolocation(options: GeolocationOptions = {}) {
         error: null,
         loading: false,
         isDefaultLocation: false,
-        city: undefined,  // Clear default city
-        country: undefined,  // Clear default country
+        city: undefined, // Clear default city
+        country: undefined, // Clear default country
       });
 
       if (options.onSuccess) {
@@ -68,7 +68,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
 
     const handleError = (error: GeolocationPositionError) => {
       const errorMessage = getGeolocationErrorMessage(error);
-      setState(prev => ({
+      setState((prev) => ({
         ...BANGALORE_COORDINATES,
         accuracy: null,
         error: `${errorMessage} Using default location (Bangalore).`,
@@ -90,7 +90,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
     const watchId = navigator.geolocation.watchPosition(
       handleSuccess,
       handleError,
-      geolocationOptions
+      geolocationOptions,
     );
 
     // Cleanup function to remove the watcher
@@ -101,7 +101,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
 
   // Function to manually retry getting location
   const retry = () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState((prev) => ({ ...prev, loading: true, error: null }));
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setState({
@@ -117,7 +117,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
       },
       (error) => {
         const errorMessage = getGeolocationErrorMessage(error);
-        setState(prev => ({
+        setState((prev) => ({
           ...BANGALORE_COORDINATES,
           accuracy: null,
           error: `${errorMessage} Using default location (Bangalore).`,
@@ -129,7 +129,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
         enableHighAccuracy: options.enableHighAccuracy ?? true,
         timeout: options.timeout ?? 5000,
         maximumAge: 0,
-      }
+      },
     );
   };
 

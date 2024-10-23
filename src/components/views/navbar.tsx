@@ -15,7 +15,11 @@ interface NavBarProps {
   isUsingCurrentLocation: boolean;
 }
 
-const NavBar = ({ onLocationChange, onUseCurrentLocation, isUsingCurrentLocation }: NavBarProps) => {
+const NavBar = ({
+  onLocationChange,
+  onUseCurrentLocation,
+  isUsingCurrentLocation,
+}: NavBarProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -108,7 +112,10 @@ const NavBar = ({ onLocationChange, onUseCurrentLocation, isUsingCurrentLocation
               <div className="relative flex items-center gap-2">
                 <div className="relative flex-1">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                    <Search
+                      className="h-5 w-5 text-muted-foreground"
+                      aria-hidden="true"
+                    />
                   </div>
                   <Input
                     ref={inputRef}
@@ -131,8 +138,9 @@ const NavBar = ({ onLocationChange, onUseCurrentLocation, isUsingCurrentLocation
                   onClick={() => {
                     onUseCurrentLocation();
                   }}
-                  className={`p-2 rounded-md hover:bg-primary/10 ${isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
-                    }`}
+                  className={`p-2 rounded-md hover:bg-primary/10 ${
+                    isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
+                  }`}
                   title="Use current location"
                 >
                   <MapPin className="h-5 w-5" />
@@ -148,8 +156,9 @@ const NavBar = ({ onLocationChange, onUseCurrentLocation, isUsingCurrentLocation
                   {citySuggestions.map((city, index) => (
                     <li
                       key={`${city.name}-${city.country}`}
-                      className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${index === selectedIndex ? 'bg-primary/10' : ''
-                        }`}
+                      className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
+                        index === selectedIndex ? 'bg-primary/10' : ''
+                      }`}
                       onClick={() => handleCitySelect(city)}
                       onMouseEnter={() => setSelectedIndex(index)}
                       role="option"

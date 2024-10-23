@@ -2,44 +2,47 @@
 
 'use client';
 
-import { useGeolocation } from "@/hooks/useGeolocation";
-import { useEffect, useState, useCallback } from "react";
-import { WeatherData } from "@/types/weather";
-import { fetchWeatherData } from "@/actions/weatherActions";
-import NavBar from "@/components/views/navbar";
-import WeatherDashboard from "@/components/views/dashboard";
-import WeatherDashboardSkeleton from "@/components/views/dashboard-skeleton";
+import { useGeolocation } from '@/hooks/useGeolocation';
+import { useEffect, useState, useCallback } from 'react';
+import { WeatherData } from '@/types/weather';
+import { fetchWeatherData } from '@/actions/weatherActions';
+import NavBar from '@/components/views/navbar';
+import WeatherDashboard from '@/components/views/dashboard';
+import WeatherDashboardSkeleton from '@/components/views/dashboard-skeleton';
 
 export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(
+    null,
+  );
   const [isManualSelection, setIsManualSelection] = useState(false);
   const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');
 
-  const handleGeolocationSuccess = useCallback((position: GeolocationPosition) => {
-    if (!isManualSelection) {
-      console.log('Updating from geolocation');
-      setCoordinates(prev => {
-        const newLat = position.coords.latitude;
-        const newLon = position.coords.longitude;
-        if (!prev) return { lat: newLat, lon: newLon };
+  const handleGeolocationSuccess = useCallback(
+    (position: GeolocationPosition) => {
+      if (!isManualSelection) {
+        console.log('Updating from geolocation');
+        setCoordinates((prev) => {
+          const newLat = position.coords.latitude;
+          const newLon = position.coords.longitude;
+          if (!prev) return { lat: newLat, lon: newLon };
 
-        const latDiff = Math.abs(prev.lat - newLat);
-        const lonDiff = Math.abs(prev.lon - newLon);
+          const latDiff = Math.abs(prev.lat - newLat);
+          const lonDiff = Math.abs(prev.lon - newLon);
 
-        if (latDiff > 0.001 || lonDiff > 0.001) {
-          return { lat: newLat, lon: newLon };
-        }
-        return prev;
-      });
-    }
-  }, [isManualSelection]);
+          if (latDiff > 0.001 || lonDiff > 0.001) {
+            return { lat: newLat, lon: newLon };
+          }
+          return prev;
+        });
+      }
+    },
+    [isManualSelection],
+  );
 
-  const {
-    loading: locationLoading
-  } = useGeolocation({
+  const { loading: locationLoading } = useGeolocation({
     timeout: 5000,
     onSuccess: handleGeolocationSuccess,
     onError: () => {
@@ -98,7 +101,7 @@ export default function WeatherApp() {
     }
 
     if (isLoading || !weatherData) {
-      return <WeatherDashboardSkeleton />
+      return <WeatherDashboardSkeleton />;
     }
 
     return <WeatherDashboard weatherData={weatherData} unit={unit} />;

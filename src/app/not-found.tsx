@@ -15,14 +15,12 @@ export default function NotFound() {
         <h1 className="text-4xl font-bold text-primary">404</h1>
         <h2 className="text-2xl font-semibold text-foreground">Page Not Found</h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Oops! The weather seems unpredictable here. The page you're looking for
-          doesn't exist or has been moved to a different location.
+          Oops! The weather seems unpredictable here. The page you're looking for doesn't
+          exist or has been moved to a different location.
         </p>
         <div className="flex justify-center gap-4">
           <Button asChild>
-            <Link href="/">
-              Return Home
-            </Link>
+            <Link href="/">Return Home</Link>
           </Button>
           <Button variant="outline" onClick={() => window.history.back()}>
             Go Back
@@ -32,18 +30,10 @@ export default function NotFound() {
 
       {/* Weather-themed background decoration */}
       <div className="fixed inset-0 -z-10 pointer-events-none opacity-5">
-        <div className="absolute top-10 left-10 w-16 h-16">
-          ☁️
-        </div>
-        <div className="absolute top-40 right-20 w-16 h-16">
-          🌤️
-        </div>
-        <div className="absolute bottom-20 left-30 w-16 h-16">
-          🌧️
-        </div>
-        <div className="absolute bottom-40 right-40 w-16 h-16">
-          ⛈️
-        </div>
+        <div className="absolute top-10 left-10 w-16 h-16">☁️</div>
+        <div className="absolute top-40 right-20 w-16 h-16">🌤️</div>
+        <div className="absolute bottom-20 left-30 w-16 h-16">🌧️</div>
+        <div className="absolute bottom-40 right-40 w-16 h-16">⛈️</div>
       </div>
     </div>
   );

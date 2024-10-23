@@ -11,10 +11,7 @@ import {
 const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-export async function fetchWeatherData(
-  lat: number,
-  lon: number
-): Promise<WeatherData> {
+export async function fetchWeatherData(lat: number, lon: number): Promise<WeatherData> {
   try {
     const [currentWeather, forecast, airPollution] = await Promise.all([
       // Current weather

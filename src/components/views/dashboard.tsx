@@ -50,6 +50,6 @@ const WeatherDashboard: React.FC<WeatherDashboardProps> = ({ weatherData, unit }
       </div>
     </div>
   );
-}
+};
 
 export default WeatherDashboard;

@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'always' as const,
       priority: 1,
-    }
+    },
   ];
 
   return routes;
