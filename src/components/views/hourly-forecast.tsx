@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Sun, Cloud, CloudRain, CloudSnow } from 'lucide-react';
+import { Clock, CloudSnow } from 'lucide-react';
+import { ClearSky, Cloudy, Rainy, Sunny } from '@/public/svgs/weather';
 
 interface HourlyForecast {
   time: string;
@@ -17,15 +18,15 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({ forecast, unit }) => {
   const getWeatherIcon = (weather: string) => {
     switch (weather.toLowerCase()) {
       case 'clear':
-        return <Sun className="w-6 h-6 text-yellow-400" />;
+        return <Sunny className="w-6 h-6" />;
       case 'clouds':
-        return <Cloud className="w-6 h-6 text-gray-400" />;
+        return <Cloudy className="w-6 h-6" />;
       case 'rain':
-        return <CloudRain className="w-6 h-6 text-blue-400" />;
+        return <Rainy className="w-6 h-6" />;
       case 'snow':
-        return <CloudSnow className="w-6 h-6 text-blue-200" />;
+        return <CloudSnow className="w-6 h-6" />;
       default:
-        return <Sun className="w-6 h-6 text-yellow-400" />;
+        return <ClearSky className="w-6 h-6" />;
     }
   };
 
@@ -38,9 +39,9 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({ forecast, unit }) => {
         <div className="flex items-center justify-evenly w-full h-full">
           {forecast.slice(0, 5).map((hour, index) => (
             <div key={index} className="text-center flex flex-col items-center gap-2">
-              <p className="text-sm font-medium">{hour.time}</p>
+              <p className="text-xs sm:text-sm font-medium">{hour.time}</p>
               {getWeatherIcon(hour.weather)}
-              <p className="mt-1 text-sm">
+              <p className="mt-1 text-xs sm:text-sm">
                 {Math.round(hour.temperature)}°{unit === 'metric' ? 'C' : 'F'}
               </p>
             </div>

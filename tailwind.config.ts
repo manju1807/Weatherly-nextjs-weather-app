@@ -20,7 +20,7 @@ const config: Config = {
         poster: '2 / 3',
       },
       fontSize: {
-        xs: ['0.75rem', { lineHeight: '1rem' }],
+        xs: ['0.8125rem', { lineHeight: '1rem' }],
         sm: ['0.875rem', { lineHeight: '1.25rem' }],
         base: ['1rem', { lineHeight: '1.5rem' }],
         md: ['1rem', { lineHeight: '1.5rem' }],

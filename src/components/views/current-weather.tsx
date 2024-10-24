@@ -46,7 +46,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
               {currentWeather.name}, {currentWeather.sys.country}
             </h2>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground">
                 Today,{' '}
                 {new Date().toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -54,7 +54,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
                   day: 'numeric',
                 })}
               </p>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground">
                 {new Date().toLocaleTimeString('en-US', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -81,7 +81,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
             <p className="text-xl font-semibold text-muted-foreground">
               {currentWeather.weather[0].main}
             </p>
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground">
               Feels like {Math.round(currentWeather.main.feels_like)}°
               {unit === 'metric' ? 'C' : 'F'}
             </p>
@@ -91,25 +91,25 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         {/* Weather Details Grid */}
         <div className="grid grid-cols-2 gap-4 w-full">
           <div className="flex items-center ">
-            <CloudRain className="w-5 h-5 mr-2 text-blue-400" />
-            <span className="text-sm  md:text-md">
+            <CloudRain className="w-5 h-5 mr-2 aspect-square text-blue-400" />
+            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
               Rain Chance: {forecast.list[0].pop * 100}%
             </span>
           </div>
           <div className="flex items-center">
-            <Wind className="w-5 h-5 mr-2 text-blue-400" />
-            <span>
+            <Wind className="w-5 h-5 mr-2 aspect-square text-blue-400" />
+            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
               Wind Speed: {Math.round(currentWeather.wind.speed)}{' '}
               {unit === 'metric' ? 'km/h' : 'mph'}
             </span>
           </div>
           <div className="flex items-center">
-            <Droplets className="w-5 h-5 mr-2 text-blue-400" />
-            <span>Humidity: {currentWeather.main.humidity}%</span>
+            <Droplets className="w-5 h-5 mr-2 aspect-square text-blue-400" />
+            <span className="text-xs sm:text-sm  md:text-md text-nowrap">Humidity: {currentWeather.main.humidity}%</span>
           </div>
           <div className="flex items-center">
-            <Gauge className="w-5 h-5 mr-2 text-red-400" />
-            <span>Pressure: {currentWeather.main.pressure} mb</span>
+            <Gauge className="w-5 h-5 mr-2 aspect-square text-red-400" />
+            <span className="text-xs sm:text-sm  md:text-md text-nowrap">Pressure: {currentWeather.main.pressure} mb</span>
           </div>
         </div>
       </CardContent>
