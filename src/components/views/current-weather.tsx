@@ -105,11 +105,15 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
           </div>
           <div className="flex items-center">
             <Droplets className="w-5 h-5 mr-2 aspect-square text-blue-400" />
-            <span className="text-xs sm:text-sm  md:text-md text-nowrap">Humidity: {currentWeather.main.humidity}%</span>
+            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+              Humidity: {currentWeather.main.humidity}%
+            </span>
           </div>
           <div className="flex items-center">
             <Gauge className="w-5 h-5 mr-2 aspect-square text-red-400" />
-            <span className="text-xs sm:text-sm  md:text-md text-nowrap">Pressure: {currentWeather.main.pressure} mb</span>
+            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+              Pressure: {currentWeather.main.pressure} mb
+            </span>
           </div>
         </div>
       </CardContent>

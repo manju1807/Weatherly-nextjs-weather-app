@@ -53,18 +53,24 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
             <div className="space-y-2">
               <p className="flex items-center">
                 <Gauge className="w-5 h-5 mr-2 aspect-square text-red-400 dark:text-red-300" />
-                <span className="text-xs sm:text-sm  md:text-md text-nowrap">{currentWeather.main.pressure} hPa</span>
+                <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+                  {currentWeather.main.pressure} hPa
+                </span>
               </p>
               {currentWeather.main.sea_level && (
                 <p className="flex items-center">
                   <Waves className="w-5 h-5 mr-2 aspect-square text-blue-400 dark:text-blue-300" />
-                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">Sea Level: {currentWeather.main.sea_level} hPa</span>
+                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+                    Sea Level: {currentWeather.main.sea_level} hPa
+                  </span>
                 </p>
               )}
               {currentWeather.main.grnd_level && (
                 <p className="flex items-center">
                   <Mountain className="w-5 h-5 mr-2 aspect-square text-green-400 dark:text-green-300" />
-                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">Ground Level: {currentWeather.main.grnd_level} hPa</span>
+                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+                    Ground Level: {currentWeather.main.grnd_level} hPa
+                  </span>
                 </p>
               )}
             </div>
