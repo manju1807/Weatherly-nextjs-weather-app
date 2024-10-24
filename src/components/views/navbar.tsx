@@ -55,8 +55,9 @@ const SearchSuggestions = memo(
         {suggestions.map((city, index) => (
           <li
             key={`${city.name}-${city.lat}-${city.lon}`}
-            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${index === selectedIndex ? 'bg-primary/10' : ''
-              }`}
+            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
+              index === selectedIndex ? 'bg-primary/10' : ''
+            }`}
             onClick={() => onSelect(city)}
             onMouseEnter={() => onMouseEnter(index)}
             role="option"
@@ -255,8 +256,9 @@ const NavBar = ({
                   </div>
                   <button
                     onClick={onUseCurrentLocation}
-                    className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
-                      }`}
+                    className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${
+                      isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
+                    }`}
                     aria-label={`${isUsingCurrentLocation ? 'Using current location' : 'Use current location'}`}
                     aria-pressed={isUsingCurrentLocation}
                   >

@@ -18,13 +18,21 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   const getWeatherIcon = (main: string) => {
     switch (main.toLowerCase()) {
       case 'clear':
-        return <Sunny className="w-32 h-32 text-yellow-500 transition-transform hover:scale-105" />;
+        return (
+          <Sunny className="w-32 h-32 text-yellow-500 transition-transform hover:scale-105" />
+        );
       case 'clouds':
-        return <Cloudy className="w-32 h-32 text-gray-500 transition-transform hover:scale-105" />;
+        return (
+          <Cloudy className="w-32 h-32 text-gray-500 transition-transform hover:scale-105" />
+        );
       case 'rain':
-        return <Rainy className="w-32 h-32 text-blue-500 transition-transform hover:scale-105" />;
+        return (
+          <Rainy className="w-32 h-32 text-blue-500 transition-transform hover:scale-105" />
+        );
       default:
-        return <ClearSky className="w-32 h-32 text-yellow-400 transition-transform hover:scale-105" />;
+        return (
+          <ClearSky className="w-32 h-32 text-yellow-400 transition-transform hover:scale-105" />
+        );
     }
   };
 
@@ -84,7 +92,9 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         <div className="grid grid-cols-2 gap-4 w-full">
           <div className="flex items-center ">
             <CloudRain className="w-5 h-5 mr-2 text-blue-400" />
-            <span className='text-sm  md:text-md'>Rain Chance: {forecast.list[0].pop * 100}%</span>
+            <span className="text-sm  md:text-md">
+              Rain Chance: {forecast.list[0].pop * 100}%
+            </span>
           </div>
           <div className="flex items-center">
             <Wind className="w-5 h-5 mr-2 text-blue-400" />

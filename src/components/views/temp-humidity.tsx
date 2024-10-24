@@ -54,10 +54,7 @@ const TooltipContent = memo(
     if (!active || !payload || !payload.length) return null;
 
     return (
-      <div
-        className="rounded-lg border bg-background p-2 shadow-sm"
-        role="tooltip"
-      >
+      <div className="rounded-lg border bg-background p-2 shadow-sm" role="tooltip">
         <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-[var(--color-temperature)]" />
@@ -83,7 +80,6 @@ interface ChartComponentProps {
 }
 
 const ChartComponent = memo(({ chartData, temperatureUnit }: ChartComponentProps) => {
-
   const timeFormatter = (timestamp: string) => {
     try {
       const date = new Date(parseInt(timestamp));

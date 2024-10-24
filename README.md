@@ -4,27 +4,27 @@
 
 ## 🚀 Key Features
 
-* 🌍 Real-time weather updates and forecasts
-* 🌡️ Detailed weather metrics including temperature, humidity, and wind speed
-* 🌆 Air quality monitoring and UV index tracking
-* 🎨 Light/Dark theme support
-* 🌐 Multi-language support
-* 📱 Responsive design for various devices
-* ♿ Accessibility-focused interface
-* 🗺️ Interactive weather maps
+- 🌍 Real-time weather updates and forecasts
+- 🌡️ Detailed weather metrics including temperature, humidity, and wind speed
+- 🌆 Air quality monitoring and UV index tracking
+- 🎨 Light/Dark theme support
+- 🌐 Multi-language support
+- 📱 Responsive design for various devices
+- ♿ Accessibility-focused interface
+- 🗺️ Interactive weather maps
 
 ## 🛠️ Built With
 
-* ⚡ **Next.js** - React framework for production
-* ⚛️ **React** - JavaScript library for building user interfaces
-* 📘 **TypeScript** - Typed superset of JavaScript
-* 🎨 **Tailwind CSS** - Utility-first CSS framework
-* 🎭 **Radix UI** - Unstyled, accessible components for React
-* 🖼️ **Lucide React** - Beautiful & consistent icon pack
-* 📊 **Recharts** - Composable charting library for React
-* 🗺️ **React Leaflet** - Maps integration
-* 🌙 **next-themes** - Theme management
-* 🚨 **React Error Boundary** - Error handling
+- ⚡ **Next.js** - React framework for production
+- ⚛️ **React** - JavaScript library for building user interfaces
+- 📘 **TypeScript** - Typed superset of JavaScript
+- 🎨 **Tailwind CSS** - Utility-first CSS framework
+- 🎭 **Radix UI** - Unstyled, accessible components for React
+- 🖼️ **Lucide React** - Beautiful & consistent icon pack
+- 📊 **Recharts** - Composable charting library for React
+- 🗺️ **React Leaflet** - Maps integration
+- 🌙 **next-themes** - Theme management
+- 🚨 **React Error Boundary** - Error handling
 
 ## 📈 Development Process
 
@@ -82,10 +82,10 @@ This project uses the OpenWeather API for weather data. Ensure you comply with O
 
 ## Screenshots
 
-* ![Screenshot 1](https://github.com/user-attachments/assets/weather-app-screenshot-1.png)
-* ![Screenshot 2](https://github.com/user-attachments/assets/weather-app-screenshot-2.png)
-* ![Screenshot 3](https://github.com/user-attachments/assets/weather-app-screenshot-3.png)
-* ![Screenshot 4](https://github.com/user-attachments/assets/weather-app-screenshot-4.png)
+- ![Screenshot 1](https://github.com/user-attachments/assets/weather-app-screenshot-1.png)
+- ![Screenshot 2](https://github.com/user-attachments/assets/weather-app-screenshot-2.png)
+- ![Screenshot 3](https://github.com/user-attachments/assets/weather-app-screenshot-3.png)
+- ![Screenshot 4](https://github.com/user-attachments/assets/weather-app-screenshot-4.png)
 
 ---
 
