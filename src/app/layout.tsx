@@ -102,7 +102,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main id="main-content" className="min-h-screen">
+          <main id="main-content" className="min-h-screen text-nowrap">
             <TooltipProvider>{children}</TooltipProvider>
           </main>
         </ThemeProvider>

@@ -84,7 +84,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         <div className="grid grid-cols-2 gap-4 w-full">
           <div className="flex items-center ">
             <CloudRain className="w-5 h-5 mr-2 text-blue-400" />
-            <span>Rain Chance: {forecast.list[0].pop * 100}%</span>
+            <span className='text-sm  md:text-md'>Rain Chance: {forecast.list[0].pop * 100}%</span>
           </div>
           <div className="flex items-center">
             <Wind className="w-5 h-5 mr-2 text-blue-400" />
