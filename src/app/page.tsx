@@ -1,7 +1,7 @@
 'use client';
 
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense, lazy, useMemo } from 'react';
 import { WeatherData, DEFAULT_COORDINATES } from '@/types/weather';
 import { fetchWeatherData } from '@/actions/weatherActions';
 import NavBar from '@/components/views/navbar';
@@ -10,12 +10,44 @@ import Footer from '@/components/views/footer';
 import { ErrorBoundary } from 'react-error-boundary';
 import LocationPermissionDialog from '@/components/views/location-dialog';
 
-// Lazy load the WeatherDashboard component for better initial load performance
+// Lazy load the WeatherDashboard component
 const WeatherDashboard = lazy(() => import('@/components/views/dashboard'));
 
-/**
- * Error Fallback component displayed when an error occurs in the application
- */
+// Utility function to compare coordinates
+const areCoordinatesEqual = (
+  prev: { lat: number; lon: number },
+  next: { lat: number; lon: number }
+): boolean => {
+  return Math.abs(prev.lat - next.lat) < 0.000001 &&
+    Math.abs(prev.lon - next.lon) < 0.000001;
+};
+
+// Custom hook for debounced coordinates with equality check
+function useDebounceWithComparison<T>(
+  value: T,
+  delay: number,
+  compareFunc: (prev: T, next: T) => boolean
+): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  const previousValue = useRef(value);
+
+  useEffect(() => {
+    if (!compareFunc(previousValue.current, value)) {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+        previousValue.current = value;
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }
+  }, [value, delay, compareFunc]);
+
+  return debouncedValue;
+}
+
+// Error Fallback component
 function ErrorFallback({
   error,
   resetErrorBoundary,
@@ -40,9 +72,6 @@ function ErrorFallback({
   );
 }
 
-/**
- * Loading indicator component with accessibility support
- */
 function LoadingIndicator({ message }: { message: string }) {
   return (
     <div className="flex-1">
@@ -58,30 +87,7 @@ function LoadingIndicator({ message }: { message: string }) {
   );
 }
 
-/**
- * Custom hook for debouncing values to prevent excessive API calls
- */
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
-/**
- * Main WeatherApp component that handles weather data fetching and display
- */
 export default function WeatherApp() {
-  // State management for weather data and UI control
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,57 +97,59 @@ export default function WeatherApp() {
   const [showLocationDialog, setShowLocationDialog] = useState(true);
   const [geolocationEnabled, setGeolocationEnabled] = useState(false);
 
-  // Refs for component lifecycle and API call management
   const isMounted = useRef(true);
   const fetchController = useRef<AbortController | null>(null);
   const hasInitialLoad = useRef(false);
 
-  // Debounce coordinates changes to prevent rapid API calls
-  const debouncedCoordinates = useDebounce(coordinates, 500);
+  // Memoize coordinates comparison function
+  const compareCoordinates = useCallback(areCoordinatesEqual, []);
 
-  // Get user's location using the geolocation hook
-  const {
-    latitude,
-    longitude,
-    loading: locationLoading,
-    hasPermission,
-  } = useGeolocation({
+  // Use custom debounce hook with coordinates comparison
+  const debouncedCoordinates = useDebounceWithComparison(
+    coordinates,
+    500,
+    compareCoordinates
+  );
+
+  const { latitude, longitude, loading: locationLoading, hasPermission } = useGeolocation({
     timeout: 1000,
     enabled: geolocationEnabled,
   });
 
-  // Update coordinates when geolocation values change
+  // Memoize new coordinates to prevent unnecessary updates
+  const newCoordinates = useMemo(
+    () => ({ lat: latitude, lon: longitude }),
+    [latitude, longitude]
+  );
+
+  // Update coordinates only when geolocation values actually change
   useEffect(() => {
     if (
       geolocationEnabled &&
       hasPermission &&
-      latitude &&
-      longitude &&
-      !isManualSelection
+      !isManualSelection &&
+      !areCoordinatesEqual(coordinates, newCoordinates)
     ) {
-      setCoordinates({
-        lat: latitude,
-        lon: longitude,
-      });
+      setCoordinates(newCoordinates);
       hasInitialLoad.current = true;
     }
-  }, [latitude, longitude, geolocationEnabled, isManualSelection, hasPermission]);
+  }, [geolocationEnabled, hasPermission, isManualSelection, newCoordinates, coordinates]);
 
-  // Handler for manual location selection
   const handleLocationChange = useCallback((lat: number, lon: number) => {
-    setIsManualSelection(true);
-    setGeolocationEnabled(false);
-    setCoordinates({ lat, lon });
-    hasInitialLoad.current = true;
-  }, []);
+    const newCoords = { lat, lon };
+    if (!areCoordinatesEqual(coordinates, newCoords)) {
+      setIsManualSelection(true);
+      setGeolocationEnabled(false);
+      setCoordinates(newCoords);
+      hasInitialLoad.current = true;
+    }
+  }, [coordinates]);
 
-  // Handler for using current location
   const handleUseCurrentLocation = useCallback(() => {
     setIsManualSelection(false);
     setGeolocationEnabled(true);
   }, []);
 
-  // Handlers for location permission dialog
   const handleAllowLocation = useCallback(() => {
     setShowLocationDialog(false);
     setGeolocationEnabled(true);
@@ -155,7 +163,7 @@ export default function WeatherApp() {
     hasInitialLoad.current = true;
   }, []);
 
-  // Effect for fetching weather data with proper cleanup
+  // Effect for fetching weather data with debounced coordinates
   useEffect(() => {
     if (!debouncedCoordinates || (locationLoading && !hasInitialLoad.current)) return;
 
@@ -197,7 +205,6 @@ export default function WeatherApp() {
     };
   }, [debouncedCoordinates, locationLoading]);
 
-  // Cleanup effect
   useEffect(() => {
     return () => {
       isMounted.current = false;
@@ -207,8 +214,7 @@ export default function WeatherApp() {
     };
   }, []);
 
-  // Render appropriate content based on current state
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     if (showLocationDialog) {
       return <WeatherDashboardSkeleton />;
     }
@@ -238,7 +244,7 @@ export default function WeatherApp() {
         <WeatherDashboard weatherData={weatherData} unit={unit} />
       </Suspense>
     );
-  };
+  }, [showLocationDialog, isManualSelection, locationLoading, error, weatherData, isLoading, unit]);
 
   return (
     <div className="min-h-screen flex flex-col">
