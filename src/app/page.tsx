@@ -16,17 +16,18 @@ const WeatherDashboard = lazy(() => import('@/components/views/dashboard'));
 // Utility function to compare coordinates
 const areCoordinatesEqual = (
   prev: { lat: number; lon: number },
-  next: { lat: number; lon: number }
+  next: { lat: number; lon: number },
 ): boolean => {
-  return Math.abs(prev.lat - next.lat) < 0.000001 &&
-    Math.abs(prev.lon - next.lon) < 0.000001;
+  return (
+    Math.abs(prev.lat - next.lat) < 0.000001 && Math.abs(prev.lon - next.lon) < 0.000001
+  );
 };
 
 // Custom hook for debounced coordinates with equality check
 function useDebounceWithComparison<T>(
   value: T,
   delay: number,
-  compareFunc: (prev: T, next: T) => boolean
+  compareFunc: (prev: T, next: T) => boolean,
 ): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
   const previousValue = useRef(value);
@@ -108,10 +109,15 @@ export default function WeatherApp() {
   const debouncedCoordinates = useDebounceWithComparison(
     coordinates,
     500,
-    compareCoordinates
+    compareCoordinates,
   );
 
-  const { latitude, longitude, loading: locationLoading, hasPermission } = useGeolocation({
+  const {
+    latitude,
+    longitude,
+    loading: locationLoading,
+    hasPermission,
+  } = useGeolocation({
     timeout: 1000,
     enabled: geolocationEnabled,
   });
@@ -119,7 +125,7 @@ export default function WeatherApp() {
   // Memoize new coordinates to prevent unnecessary updates
   const newCoordinates = useMemo(
     () => ({ lat: latitude, lon: longitude }),
-    [latitude, longitude]
+    [latitude, longitude],
   );
 
   // Update coordinates only when geolocation values actually change
@@ -135,15 +141,18 @@ export default function WeatherApp() {
     }
   }, [geolocationEnabled, hasPermission, isManualSelection, newCoordinates, coordinates]);
 
-  const handleLocationChange = useCallback((lat: number, lon: number) => {
-    const newCoords = { lat, lon };
-    if (!areCoordinatesEqual(coordinates, newCoords)) {
-      setIsManualSelection(true);
-      setGeolocationEnabled(false);
-      setCoordinates(newCoords);
-      hasInitialLoad.current = true;
-    }
-  }, [coordinates]);
+  const handleLocationChange = useCallback(
+    (lat: number, lon: number) => {
+      const newCoords = { lat, lon };
+      if (!areCoordinatesEqual(coordinates, newCoords)) {
+        setIsManualSelection(true);
+        setGeolocationEnabled(false);
+        setCoordinates(newCoords);
+        hasInitialLoad.current = true;
+      }
+    },
+    [coordinates],
+  );
 
   const handleUseCurrentLocation = useCallback(() => {
     setIsManualSelection(false);
@@ -244,7 +253,15 @@ export default function WeatherApp() {
         <WeatherDashboard weatherData={weatherData} unit={unit} />
       </Suspense>
     );
-  }, [showLocationDialog, isManualSelection, locationLoading, error, weatherData, isLoading, unit]);
+  }, [
+    showLocationDialog,
+    isManualSelection,
+    locationLoading,
+    error,
+    weatherData,
+    isLoading,
+    unit,
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col">

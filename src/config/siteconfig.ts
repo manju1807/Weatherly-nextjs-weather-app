@@ -16,7 +16,7 @@ export const geistMono = localFont({
 
 // Viewport configuration
 export const viewport: Viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
   minimumScale: 1,
   maximumScale: 5,
@@ -27,8 +27,10 @@ export const siteConfig = {
   url: 'https://weatherly18.netlify.app/',
   name: 'Weatherly',
   title: 'Weatherly: Real-Time Weather Updates & Forecasts',
-  description: 'Get accurate weather forecasts, real-time updates, air quality data, and detailed weather information for any location worldwide. Features interactive maps, hourly forecasts, and comprehensive weather metrics using OpenWeather API.',
-  keywords: 'weather app, weather forecast, real-time weather, air quality index, temperature tracking, weather radar, climate data, weather maps, hourly forecast, weather alerts, precipitation forecast, wind speed, humidity levels, atmospheric pressure, UV index, weather dashboard, global weather, local weather, weather visualization, meteorological data, weather conditions',
+  description:
+    'Get accurate weather forecasts, real-time updates, air quality data, and detailed weather information for any location worldwide. Features interactive maps, hourly forecasts, and comprehensive weather metrics using OpenWeather API.',
+  keywords:
+    'weather app, weather forecast, real-time weather, air quality index, temperature tracking, weather radar, climate data, weather maps, hourly forecast, weather alerts, precipitation forecast, wind speed, humidity levels, atmospheric pressure, UV index, weather dashboard, global weather, local weather, weather visualization, meteorological data, weather conditions',
   author: 'Manjunath R',
   category: 'Weather, Forecast, Climate',
   ogImage: 'opengraph-image.png',
