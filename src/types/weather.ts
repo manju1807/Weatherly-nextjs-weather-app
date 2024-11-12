@@ -1,9 +1,14 @@
 // types/weather.ts
 
 export interface Coordinates {
-  lon: number;
   lat: number;
+  lon: number;
 }
+
+export const DEFAULT_COORDINATES: Coordinates = {
+  lat: 40.712776,
+  lon: -74.005974,
+};
 
 export interface WeatherCondition {
   id: number;

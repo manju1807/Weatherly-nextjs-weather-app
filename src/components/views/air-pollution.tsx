@@ -84,10 +84,6 @@ const AirPollutionChart: React.FC<AirPollutionChartProps> = ({ data }) => {
     { name: 'so2', pollutant: 'SO₂', value: components.so2, fill: 'var(--color-so2)' },
   ];
 
-  const totalValue = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.value, 0);
-  }, [chartData]);
-
   return (
     <Card className="flex flex-col">
       <CardHeader className="pb-0">
