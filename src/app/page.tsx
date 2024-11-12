@@ -82,7 +82,6 @@ export default function WeatherApp() {
   const [unit] = useState<'metric' | 'imperial'>('metric');
   const [showLocationDialog, setShowLocationDialog] = useState(true);
   const [geolocationEnabled, setGeolocationEnabled] = useState(false);
-
   const isMounted = useRef(true);
   const fetchController = useRef<AbortController | null>(null);
   const hasInitialLoad = useRef(false);
@@ -106,6 +105,7 @@ export default function WeatherApp() {
     timeout: 1000,
     enabled: geolocationEnabled,
   });
+
 
   // Memoize new coordinates to prevent unnecessary updates
   const newCoordinates = useMemo(
