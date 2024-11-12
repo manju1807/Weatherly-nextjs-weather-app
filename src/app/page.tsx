@@ -73,21 +73,6 @@ function ErrorFallback({
   );
 }
 
-function LoadingIndicator({ message }: { message: string }) {
-  return (
-    <div className="flex-1">
-      <WeatherDashboardSkeleton />
-      <div
-        className="absolute inset-0 flex items-center justify-center bg-black/5"
-        role="status"
-        aria-live="polite"
-      >
-        <p className="text-lg font-medium text-gray-700">{message}</p>
-      </div>
-    </div>
-  );
-}
-
 export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -229,7 +214,7 @@ export default function WeatherApp() {
     }
 
     if (!isManualSelection && locationLoading && !hasInitialLoad.current) {
-      return <LoadingIndicator message="Getting location..." />;
+      return <WeatherDashboardSkeleton />;
     }
 
     if (error) {
