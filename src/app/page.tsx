@@ -106,7 +106,6 @@ export default function WeatherApp() {
     enabled: geolocationEnabled,
   });
 
-
   // Memoize new coordinates to prevent unnecessary updates
   const newCoordinates = useMemo(
     () => ({ lat: latitude, lon: longitude }),

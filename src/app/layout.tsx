@@ -33,11 +33,7 @@ export default function RootLayout({
             });
           `}
         </Script>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main id="main-content" className="min-h-screen text-nowrap">
             <TooltipProvider>{children}</TooltipProvider>
           </main>

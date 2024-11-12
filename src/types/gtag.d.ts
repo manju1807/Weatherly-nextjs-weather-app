@@ -5,7 +5,7 @@ interface Window {
     options?: {
       page_path?: string;
       [key: string]: any;
-    }
+    },
   ) => void;
   dataLayer: any[];
 }
