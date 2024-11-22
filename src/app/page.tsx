@@ -1,95 +1,31 @@
 'use client';
 
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { useEffect, useState, useCallback, useRef, Suspense, lazy, useMemo } from 'react';
-import { WeatherData, DEFAULT_COORDINATES } from '@/types/weather';
-import { fetchWeatherData } from '@/actions/weatherActions';
+import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
+import { DEFAULT_COORDINATES } from '@/types/weather';
 import NavBar from '@/components/views/navbar';
 import WeatherDashboardSkeleton from '@/components/views/dashboard-skeleton';
 import Footer from '@/components/views/footer';
 import { ErrorBoundary } from 'react-error-boundary';
 import LocationPermissionDialog from '@/components/views/location-dialog';
+import { useWeatherData } from '@/hooks/useWeatherData';
+import { useDebounceWithComparison } from '@/hooks/useDebounceWithComparison';
+import { useCoordinatesComparison } from '@/hooks/useCoordinatesComparison';
+import { ErrorFallback } from '@/components/error-fallback';
 
-// Lazy load the WeatherDashboard component
+// Lazy loaded component
 const WeatherDashboard = lazy(() => import('@/components/views/dashboard'));
 
-// Utility function to compare coordinates
-const areCoordinatesEqual = (
-  prev: { lat: number; lon: number },
-  next: { lat: number; lon: number },
-): boolean => {
-  return (
-    Math.abs(prev.lat - next.lat) < 0.000001 && Math.abs(prev.lon - next.lon) < 0.000001
-  );
-};
-
-// Custom hook for debounced coordinates with equality check
-function useDebounceWithComparison<T>(
-  value: T,
-  delay: number,
-  compareFunc: (prev: T, next: T) => boolean,
-): T {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  const previousValue = useRef(value);
-
-  useEffect(() => {
-    if (!compareFunc(previousValue.current, value)) {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-        previousValue.current = value;
-      }, delay);
-
-      return () => {
-        clearTimeout(handler);
-      };
-    }
-  }, [value, delay, compareFunc]);
-
-  return debouncedValue;
-}
-
-// Error Fallback component
-function ErrorFallback({
-  error,
-  resetErrorBoundary,
-}: {
-  error: Error;
-  resetErrorBoundary: () => void;
-}) {
-  return (
-    <div
-      role="alert"
-      className="flex flex-col items-center justify-center p-4 text-center"
-    >
-      <h2 className="text-lg font-semibold text-red-600">Something went wrong</h2>
-      <p className="text-sm text-gray-600 mt-2">{error.message}</p>
-      <button
-        onClick={resetErrorBoundary}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        Try again
-      </button>
-    </div>
-  );
-}
-
+// Main Component
 export default function WeatherApp() {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [coordinates, setCoordinates] = useState(DEFAULT_COORDINATES);
   const [isManualSelection, setIsManualSelection] = useState(false);
   const [unit] = useState<'metric' | 'imperial'>('metric');
   const [showLocationDialog, setShowLocationDialog] = useState(true);
   const [geolocationEnabled, setGeolocationEnabled] = useState(false);
-  const isMounted = useRef(true);
-  const fetchController = useRef<AbortController | null>(null);
-  const hasInitialLoad = useRef(false);
+  const [hasInitialLoad, setHasInitialLoad] = useState(false);
 
-  // Memoize coordinates comparison function
-  const compareCoordinates = useCallback(areCoordinatesEqual, []);
-
-  // Use custom debounce hook with coordinates comparison
+  const compareCoordinates = useCoordinatesComparison();
   const debouncedCoordinates = useDebounceWithComparison(
     coordinates,
     500,
@@ -106,36 +42,24 @@ export default function WeatherApp() {
     enabled: geolocationEnabled,
   });
 
-  // Memoize new coordinates to prevent unnecessary updates
-  const newCoordinates = useMemo(
-    () => ({ lat: latitude, lon: longitude }),
-    [latitude, longitude],
+  const { weatherData, error, isLoading, setError } = useWeatherData(
+    debouncedCoordinates,
+    locationLoading,
+    hasInitialLoad,
   );
 
-  // Update coordinates only when geolocation values actually change
-  useEffect(() => {
-    if (
-      geolocationEnabled &&
-      hasPermission &&
-      !isManualSelection &&
-      !areCoordinatesEqual(coordinates, newCoordinates)
-    ) {
-      setCoordinates(newCoordinates);
-      hasInitialLoad.current = true;
-    }
-  }, [geolocationEnabled, hasPermission, isManualSelection, newCoordinates, coordinates]);
-
+  // Location handlers
   const handleLocationChange = useCallback(
     (lat: number, lon: number) => {
       const newCoords = { lat, lon };
-      if (!areCoordinatesEqual(coordinates, newCoords)) {
+      if (!compareCoordinates(coordinates, newCoords)) {
         setIsManualSelection(true);
         setGeolocationEnabled(false);
         setCoordinates(newCoords);
-        hasInitialLoad.current = true;
+        setHasInitialLoad(true);
       }
     },
-    [coordinates],
+    [coordinates, compareCoordinates],
   );
 
   const handleUseCurrentLocation = useCallback(() => {
@@ -143,76 +67,43 @@ export default function WeatherApp() {
     setGeolocationEnabled(true);
   }, []);
 
-  const handleAllowLocation = useCallback(() => {
+  const handleLocationPermission = useCallback((allow: boolean) => {
     setShowLocationDialog(false);
-    setGeolocationEnabled(true);
-  }, []);
-
-  const handleDenyLocation = useCallback(() => {
-    setShowLocationDialog(false);
-    setGeolocationEnabled(false);
-    setIsManualSelection(true);
-    setCoordinates(DEFAULT_COORDINATES);
-    hasInitialLoad.current = true;
-  }, []);
-
-  // Effect for fetching weather data with debounced coordinates
-  useEffect(() => {
-    if (!debouncedCoordinates || (locationLoading && !hasInitialLoad.current)) return;
-
-    if (fetchController.current) {
-      fetchController.current.abort();
+    setGeolocationEnabled(allow);
+    setIsManualSelection(!allow);
+    if (!allow) {
+      setCoordinates(DEFAULT_COORDINATES);
     }
-
-    fetchController.current = new AbortController();
-    const currentController = fetchController.current;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      try {
-        const data = await fetchWeatherData(
-          debouncedCoordinates.lat,
-          debouncedCoordinates.lon,
-        );
-
-        if (currentController.signal.aborted) return;
-
-        setWeatherData(data);
-        setError(null);
-      } catch (err) {
-        if (currentController.signal.aborted) return;
-        setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
-        setWeatherData(null);
-      } finally {
-        if (!currentController.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      currentController.abort();
-    };
-  }, [debouncedCoordinates, locationLoading]);
-
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-      if (fetchController.current) {
-        fetchController.current.abort();
-      }
-    };
+    setHasInitialLoad(true);
   }, []);
 
+  // Update coordinates based on geolocation
+  useEffect(() => {
+    if (
+      geolocationEnabled &&
+      hasPermission &&
+      !isManualSelection &&
+      !compareCoordinates(coordinates, { lat: latitude, lon: longitude })
+    ) {
+      setCoordinates({ lat: latitude, lon: longitude });
+      setHasInitialLoad(true);
+    }
+  }, [
+    geolocationEnabled,
+    hasPermission,
+    isManualSelection,
+    latitude,
+    longitude,
+    coordinates,
+    compareCoordinates,
+  ]);
+
+  // Content renderer
   const renderContent = useCallback(() => {
-    if (showLocationDialog) {
-      return <WeatherDashboardSkeleton />;
-    }
-
-    if (!isManualSelection && locationLoading && !hasInitialLoad.current) {
+    if (
+      showLocationDialog ||
+      (!isManualSelection && locationLoading && !hasInitialLoad)
+    ) {
       return <WeatherDashboardSkeleton />;
     }
 
@@ -241,6 +132,7 @@ export default function WeatherApp() {
     showLocationDialog,
     isManualSelection,
     locationLoading,
+    hasInitialLoad,
     error,
     weatherData,
     isLoading,
@@ -252,8 +144,8 @@ export default function WeatherApp() {
       <LocationPermissionDialog
         open={showLocationDialog}
         onOpenChange={setShowLocationDialog}
-        onAllowLocation={handleAllowLocation}
-        onDenyLocation={handleDenyLocation}
+        onAllowLocation={() => handleLocationPermission(true)}
+        onDenyLocation={() => handleLocationPermission(false)}
       />
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
