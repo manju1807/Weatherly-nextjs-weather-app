@@ -1,5 +1,6 @@
+'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { DEFAULT_COORDINATES } from '@/types/weather';
+import { DEFAULT_COORDINATES } from '@/constants';
 
 interface GeolocationState {
   latitude: number;

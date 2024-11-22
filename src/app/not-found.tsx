@@ -15,7 +15,10 @@ const WEATHER_BACKGROUNDS = [
 ] as const;
 
 const WeatherBackground = memo(() => (
-  <div className="fixed inset-0 -z-10 pointer-events-none opacity-[0.07] dark:opacity-10" aria-hidden="true">
+  <div
+    className="fixed inset-0 -z-10 pointer-events-none opacity-[0.07] dark:opacity-10"
+    aria-hidden="true"
+  >
     {WEATHER_BACKGROUNDS.map(({ emoji, label, position }, index) => (
       <div
         key={label}
@@ -27,7 +30,10 @@ const WeatherBackground = memo(() => (
         role="presentation"
         aria-hidden="true"
       >
-        <span className="text-5xl transform hover:scale-110 transition-transform duration-300" aria-label={label}>
+        <span
+          className="text-5xl transform hover:scale-110 transition-transform duration-300"
+          aria-label={label}
+        >
           {emoji}
         </span>
       </div>
@@ -84,9 +90,7 @@ export default function NotFound() {
               >
                 404
               </h1>
-              <h2 className="text-2xl font-semibold text-foreground">
-                Page Not Found
-              </h2>
+              <h2 className="text-2xl font-semibold text-foreground">Page Not Found</h2>
             </div>
 
             {/* Description */}

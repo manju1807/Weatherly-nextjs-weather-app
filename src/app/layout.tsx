@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { metadata, viewport, geistSans, geistMono } from '@/config/siteconfig';
 import Script from 'next/script';
+import React from "react";
 
 export { metadata, viewport };
 

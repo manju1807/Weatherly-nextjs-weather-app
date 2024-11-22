@@ -2,7 +2,7 @@
 
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
-import { DEFAULT_COORDINATES } from '@/types/weather';
+import { DEFAULT_COORDINATES } from '@/constants';
 import NavBar from '@/components/views/navbar';
 import WeatherDashboardSkeleton from '@/components/views/dashboard-skeleton';
 import Footer from '@/components/views/footer';
@@ -45,7 +45,7 @@ export default function WeatherApp() {
   const { weatherData, error, isLoading, setError } = useWeatherData(
     debouncedCoordinates,
     locationLoading,
-    hasInitialLoad,
+    hasInitialLoad
   );
 
   // Location handlers
