@@ -4,7 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { metadata, viewport, geistSans, geistMono } from '@/config/siteconfig';
 import Script from 'next/script';
-import React from "react";
+import React from 'react';
 
 export { metadata, viewport };
 
@@ -14,10 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen scroll-smooth`}
-        suppressHydrationWarning={true}
+        suppressHydrationWarning
       >
         {/* Google Analytics Scripts */}
         <Script
@@ -34,12 +34,18 @@ export default function RootLayout({
             });
           `}
         </Script>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main id="main-content" className="min-h-screen text-nowrap">
-            <TooltipProvider>{children}</TooltipProvider>
-          </main>
-          <Analytics />
+
+        {/* ThemeProvider with TooltipProvider */}
+        <ThemeProvider>
+          <TooltipProvider>
+            <main id="main-content" className="min-h-screen text-nowrap">
+              {children}
+            </main>
+          </TooltipProvider>
         </ThemeProvider>
+
+        {/* Analytics Component */}
+        <Analytics />
       </body>
     </html>
   );

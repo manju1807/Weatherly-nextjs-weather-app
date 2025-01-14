@@ -1,8 +1,13 @@
 'use client';
-
+import dynamic from 'next/dynamic';
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { Input } from '@/components/ui/input';
-import { ModeToggle } from '@/components/theme-toggle';
+const ModeToggle = dynamic<unknown>(
+  () => import('../theme-toggle').then((mod) => mod.default),
+  {
+    ssr: false, // Disable SSR for this component
+  },
+);
 import { Search, MapPin } from 'lucide-react';
 import { City } from '@/types/weather';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -55,9 +60,8 @@ const SearchSuggestions = memo(
         {suggestions.map((city, index) => (
           <li
             key={`${city.name}-${city.lat}-${city.lon}`}
-            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${
-              index === selectedIndex ? 'bg-primary/10' : ''
-            }`}
+            className={`cursor-pointer select-none relative py-2 pl-3 pr-9 ${index === selectedIndex ? 'bg-primary/10' : ''
+              }`}
             onClick={() => onSelect(city)}
             onMouseEnter={() => onMouseEnter(index)}
             role="option"
@@ -215,7 +219,7 @@ const NavBar = ({
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="px-4 sm:px-6 lg:px-8">
+      <div className="container px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Logo onClick={handleLogoClick} />
 
@@ -256,9 +260,8 @@ const NavBar = ({
                   </div>
                   <button
                     onClick={onUseCurrentLocation}
-                    className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${
-                      isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
-                    }`}
+                    className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
+                      }`}
                     aria-label={`${isUsingCurrentLocation ? 'Using current location' : 'Use current location'}`}
                     aria-pressed={isUsingCurrentLocation}
                   >

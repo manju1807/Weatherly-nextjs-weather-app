@@ -45,7 +45,7 @@ export default function WeatherApp() {
   const { weatherData, error, isLoading, setError } = useWeatherData(
     debouncedCoordinates,
     locationLoading,
-    hasInitialLoad
+    hasInitialLoad,
   );
 
   // Location handlers

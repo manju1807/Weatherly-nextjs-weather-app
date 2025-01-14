@@ -4,8 +4,8 @@ interface Window {
     params: string,
     options?: {
       page_path?: string;
-      [key: string]: any;
+      [key: string]: string | number | boolean | object | undefined;
     },
   ) => void;
-  dataLayer: any[];
+  dataLayer: Array<Record<string, unknown>>;
 }
