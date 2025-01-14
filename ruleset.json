@@ -1,0 +1,48 @@
+{
+  "name": "Contributor Ruleset",
+  "description": "Rules to enforce restrictions on contributors while allowing the admin to bypass them.",
+  "enforcement": "active",
+  "bypass_actors": [
+    {
+      "actor_id": "77398124",
+      "actor_type": "User",
+      "bypass_mode": "always"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "main",
+        "develop"
+      ],
+      "exclude": [
+        "admin/*",
+        "owner/*"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "pull_request",
+      "parameters": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "required_status_checks": {
+          "strict": true,
+          "contexts": [
+            "ci/build",
+            "ci/test",
+            "netlify/deploy-preview",
+            "vercel/deploy",
+            "dependabot"
+          ]
+        }
+      }
+    },
+    {
+      "type": "required_linear_history",
+      "parameters": { }
+    }
+  ]
+}
