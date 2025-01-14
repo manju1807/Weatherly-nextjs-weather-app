@@ -38,7 +38,9 @@ const DayDuration: React.FC<DayDurationProps> = ({ data }) => {
         <CardTitle className="flex items-center gap-2">
           <Sun className="h-4 w-4" /> Daylight Hours
         </CardTitle>
-        <CardDescription>Track the day's light cycle and solar patterns</CardDescription>
+        <CardDescription>
+          Track the day&apos;s light cycle and solar patterns
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col justify-between">
         <div className="h-48">

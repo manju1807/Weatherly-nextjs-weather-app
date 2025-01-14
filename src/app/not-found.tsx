@@ -56,6 +56,7 @@ export default function NotFound() {
     try {
       window.history.back();
     } catch (error) {
+      console.log('caught an error!', error);
       router.push('/');
     }
   };
@@ -95,8 +96,8 @@ export default function NotFound() {
 
             {/* Description */}
             <p className="text-muted-foreground leading-relaxed text-wrap">
-              Oops! The weather seems unpredictable here. The page you're looking for
-              doesn't exist or has been moved to a different location.
+              Oops! The weather seems unpredictable here. The page you&apos;re looking for
+              doesn&apos;t exist or has been moved to a different location.
             </p>
 
             {/* Action Buttons */}

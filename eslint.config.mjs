@@ -1,7 +1,6 @@
-const js = require("@eslint/js");
-const { FlatCompat } = require("@eslint/eslintrc");
-const { fixupPluginRules } = require("@eslint/compat");
-const tseslint = require("typescript-eslint");
+import { FlatCompat } from "@eslint/eslintrc";
+import { fixupPluginRules } from "@eslint/compat";
+import tseslint from "typescript-eslint";
 
 const compat = new FlatCompat();
 
@@ -16,7 +15,7 @@ const patchedConfig = compatConfig.map((entry) => {
   return entry;
 });
 
-module.exports = [
+const config = [
   ...patchedConfig,
   ...tseslint.configs.recommended,
   {
@@ -25,6 +24,8 @@ module.exports = [
       parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
+        ecmaVersion: "latest",
+        sourceType: "module",
       },
     },
     plugins: {
@@ -35,6 +36,9 @@ module.exports = [
     },
   },
   {
-    ignores: [".next/*", "out/*"],
+    ignores: [".next/*", "out/*","node_modules/*",
+      "**/components/ui/**"]
   },
 ];
+
+export default config;

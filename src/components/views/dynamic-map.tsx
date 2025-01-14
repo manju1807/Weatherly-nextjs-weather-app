@@ -20,7 +20,8 @@ const DynamicMap: React.FC<DynamicMapProps> = ({
 
   // Fix for default marker icon
   useEffect(() => {
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
+      ._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -28,10 +29,11 @@ const DynamicMap: React.FC<DynamicMapProps> = ({
     });
 
     // Cleanup function
+    const mapInstance = mapRef.current;
     return () => {
-      if (mapRef.current) {
-        mapRef.current.off();
-        mapRef.current.remove();
+      if (mapInstance) {
+        mapInstance.off();
+        mapInstance.remove();
       }
     };
   }, []);
@@ -42,7 +44,7 @@ const DynamicMap: React.FC<DynamicMapProps> = ({
         center={center}
         zoom={zoom}
         style={{ height: '100%', width: '100%' }}
-        className="border rounded-md"
+        className="border rounded-md z-0"
         ref={mapRef}
         key={`${center[0]}-${center[1]}-${zoom}`}
       >
