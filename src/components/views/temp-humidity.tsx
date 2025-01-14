@@ -134,7 +134,10 @@ const ChartComponent = memo(({ chartData, temperatureUnit }: ChartComponentProps
           <ChartTooltip
             cursor={false}
             content={(props) => (
-              <TooltipContent {...(props as CustomTooltipProps)} temperatureUnit={temperatureUnit} />
+              <TooltipContent
+                {...(props as CustomTooltipProps)}
+                temperatureUnit={temperatureUnit}
+              />
             )}
           />
           <defs>

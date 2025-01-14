@@ -56,7 +56,7 @@ export default function NotFound() {
     try {
       window.history.back();
     } catch (error) {
-      console.log('caught an error!', error)
+      console.log('caught an error!', error);
       router.push('/');
     }
   };

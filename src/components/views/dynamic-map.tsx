@@ -20,7 +20,8 @@ const DynamicMap: React.FC<DynamicMapProps> = ({
 
   // Fix for default marker icon
   useEffect(() => {
-    delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })._getIconUrl;
+    delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
+      ._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
