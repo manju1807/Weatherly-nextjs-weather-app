@@ -41,7 +41,7 @@
     "typescript-eslint": "^8.20.0"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.16",
+    "@types/leaflet": "^1.9.17",
     "@types/node": "^22.10.6",
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.3",
