@@ -65,12 +65,12 @@ export default function NotFound() {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-background via-background/95 to-background"
+      className="min-h-screen flex flex-col items-center justify-center p-4 bg-linear-to-b from-background via-background/95 to-background"
       role="main"
       aria-labelledby="error-title"
     >
       <Card className="w-full max-w-md mx-auto bg-card/50 dark:bg-card/50 backdrop-blur-lg shadow-2xl animate-fade-in relative overflow-hidden border border-border">
-        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 via-orange-500/5 to-red-500/5 dark:from-yellow-500/10 dark:via-orange-500/10 dark:to-red-500/10 animate-gradient-x" />
+        <div className="absolute inset-0 bg-linear-to-r from-yellow-500/5 via-orange-500/5 to-red-500/5 dark:from-yellow-500/10 dark:via-orange-500/10 dark:to-red-500/10 animate-gradient-x" />
         <CardContent className="p-8 relative z-10">
           <div className="text-center space-y-8">
             {/* Warning Icon with Glow Effect */}
@@ -86,7 +86,7 @@ export default function NotFound() {
             <div className="space-y-3">
               <h1
                 id="error-title"
-                className="text-7xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 dark:from-yellow-400 dark:via-orange-400 dark:to-red-400 bg-clip-text text-transparent"
+                className="text-7xl font-bold bg-linear-to-r from-yellow-600 via-orange-600 to-red-600 dark:from-yellow-400 dark:via-orange-400 dark:to-red-400 bg-clip-text text-transparent"
                 tabIndex={-1}
               >
                 404
@@ -109,7 +109,7 @@ export default function NotFound() {
               <Button
                 asChild
                 variant="default"
-                className="bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-500 dark:to-orange-500 hover:from-yellow-500 hover:to-orange-500 dark:hover:from-yellow-400 dark:hover:to-orange-400 text-primary-foreground transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20 dark:hover:shadow-orange-400/20"
+                className="bg-linear-to-r from-yellow-600 to-orange-600 dark:from-yellow-500 dark:to-orange-500 hover:from-yellow-500 hover:to-orange-500 dark:hover:from-yellow-400 dark:hover:to-orange-400 text-primary-foreground transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20 dark:hover:shadow-orange-400/20"
               >
                 <Link
                   href="/"

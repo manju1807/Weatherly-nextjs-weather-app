@@ -1,5 +1,5 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useMemo, useCallback } from 'react';
+import { Card } from '@/components/ui/card';
 import { Clock, CloudSnow } from 'lucide-react';
 import { ClearSky, Cloudy, Rainy, Sunny } from '@/public/svgs/weather';
 
@@ -14,8 +14,11 @@ interface HourlyForecastProps {
   unit: 'metric' | 'imperial';
 }
 
-const HourlyForecast: React.FC<HourlyForecastProps> = ({ forecast, unit }) => {
-  const getWeatherIcon = (weather: string) => {
+const HourlyForecast: React.FC<HourlyForecastProps> = React.memo(function HourlyForecast({
+  forecast,
+  unit,
+}) {
+  const getWeatherIcon = useCallback((weather: string) => {
     switch (weather.toLowerCase()) {
       case 'clear':
         return <Sunny className="w-6 h-6" />;
@@ -28,28 +31,35 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({ forecast, unit }) => {
       default:
         return <ClearSky className="w-6 h-6" />;
     }
-  };
+  }, []);
+
+  const memoizedForecast = useMemo(() => forecast.slice(0, 5), [forecast]);
 
   return (
-    <Card className="w-full h-full">
-      <CardContent className="p-4 flex flex-col gap-6">
-        <h2 className="text-md font-semibold flex items-center">
-          <Clock className="w-5 h-5 mr-2" /> Hourly Forecast
-        </h2>
-        <div className="flex items-center justify-evenly w-full h-full">
-          {forecast.slice(0, 5).map((hour, index) => (
-            <div key={index} className="text-center flex flex-col items-center gap-2">
-              <p className="text-xs sm:text-sm font-medium">{hour.time}</p>
-              {getWeatherIcon(hour.weather)}
-              <p className="mt-1 text-xs sm:text-sm">
-                {Math.round(hour.temperature)}°{unit === 'metric' ? 'C' : 'F'}
-              </p>
-            </div>
-          ))}
+    <Card className="flex flex-col h-full">
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-2">
+          <Clock className="h-4 w-4" />
+          Hourly Forecast
         </div>
-      </CardContent>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="w-full max-w-lg mx-auto">
+          <div className="flex items-center justify-evenly w-full">
+            {memoizedForecast.map((hour, index) => (
+              <div key={index} className="text-center flex flex-col items-center gap-3">
+                <p className="text-sm font-medium text-muted-foreground">{hour.time}</p>
+                <div className="flex justify-center">{getWeatherIcon(hour.weather)}</div>
+                <p className="text-sm font-semibold">
+                  {Math.round(hour.temperature)}°{unit === 'metric' ? 'C' : 'F'}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </Card>
   );
-};
+});
 
 export default HourlyForecast;

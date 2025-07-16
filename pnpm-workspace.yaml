@@ -1,0 +1,5 @@
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - sharp
+  - unrs-resolver

@@ -60,7 +60,7 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
   }
 }
 
-export async function searchCities(query: string): Promise<City[]> {
+export async function searchCities(query: string, signal?: AbortSignal): Promise<City[]> {
   try {
     const response = await axiosInstance.get<ApiResponse>(`${BASE_URL}/find`, {
       params: {
@@ -70,6 +70,7 @@ export async function searchCities(query: string): Promise<City[]> {
         cnt: 5,
         appid: API_KEY,
       },
+      signal, // Pass the abort signal for request cancellation
     });
 
     return response.data.list.map((city) => ({
@@ -79,6 +80,10 @@ export async function searchCities(query: string): Promise<City[]> {
       lon: city.coord.lon,
     }));
   } catch (error) {
+    // Don't throw error if request was cancelled
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw error;
+    }
     console.error('Error searching cities:', error);
     throw new Error('Failed to search cities');
   }

@@ -1,4 +1,5 @@
-// Error Fallback Component
+// ErrorFallback is a React component used as a fallback UI for error boundaries.
+// It displays an error message and a button to retry the operation.
 export const ErrorFallback = ({
   error,
   resetErrorBoundary,

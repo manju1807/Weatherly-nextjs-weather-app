@@ -1,3 +1,5 @@
+// DashboardSkeleton is a React component that displays a loading skeleton while weather data is being fetched.
+// It provides a visual placeholder for the dashboard layout during loading.
 export default function WeatherDashboardSkeleton() {
   return (
     <div className="flex-1 container mx-auto px-4 py-8 animate-pulse">

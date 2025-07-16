@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Wind, Compass, Gauge, Waves, Mountain } from 'lucide-react';
 import { CurrentWeatherResponse } from '@/types/weather';
 
@@ -15,68 +15,74 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
   };
 
   return (
-    <Card className="w-full mx-auto">
-      <CardContent className="p-6">
-        <h2 className="text-md font-semibold mb-4 flex items-center">
-          <Wind className="w-6 h-6 mr-2" /> Wind & Pressure
-        </h2>
-        <div className="grid grid-cols-2 gap-0 md:gap-6">
-          <div className="text-nowrap">
-            <h3 className="text-sm sm:text-md font-semibold mb-2">Wind</h3>
-            <div className="space-y-2">
-              <p className="flex items-center">
-                <Wind className="w-5 h-5 mr-2 aspect-square text-blue-400 dark:text-blue-300" />
-                <span className="text-xs sm:text-sm  md:text-md text-nowrap">
-                  {Math.round(currentWeather.wind.speed)}{' '}
-                  {unit === 'metric' ? 'km/h' : 'mph'}
-                </span>
-              </p>
-              <p className="flex items-center">
-                <Compass className="w-5 h-5 mr-2 aspect-square text-gray-400 dark:text-gray-300" />
-                <span className="text-xs sm:text-sm  md:text-md text-nowrap">
-                  {getWindDirection(currentWeather.wind.deg)} ({currentWeather.wind.deg}°)
-                </span>
-              </p>
-              {currentWeather.wind.gust && (
-                <p className="flex items-center">
-                  <Wind className="w-5 h-5 mr-2 aspect-square text-blue-400 dark:text-blue-300" />
-                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">
-                    Gust: {Math.round(currentWeather.wind.gust)}{' '}
+    <Card className="flex flex-col h-full">
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-2">
+          <Wind className="h-4 w-4" />
+          Wind & Pressure
+        </div>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+        <div className="w-full max-w-md mx-auto">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col items-center">
+              <h3 className="text-sm font-semibold mb-4 text-center">Wind</h3>
+              <div className="space-y-3 w-full">
+                <div className="flex items-center gap-2">
+                  <Wind className="w-5 h-5 text-blue-400 dark:text-blue-300" />
+                  <span className="text-sm text-muted-foreground">
+                    {Math.round(currentWeather.wind.speed)}{' '}
                     {unit === 'metric' ? 'km/h' : 'mph'}
                   </span>
-                </p>
-              )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Compass className="w-5 h-5 text-gray-400 dark:text-gray-300" />
+                  <span className="text-sm text-muted-foreground">
+                    {getWindDirection(currentWeather.wind.deg)} ({currentWeather.wind.deg}
+                    °)
+                  </span>
+                </div>
+                {currentWeather.wind.gust && (
+                  <div className="flex items-center gap-2">
+                    <Wind className="w-5 h-5 text-blue-400 dark:text-blue-300" />
+                    <span className="text-sm text-muted-foreground">
+                      Gust: {Math.round(currentWeather.wind.gust)}{' '}
+                      {unit === 'metric' ? 'km/h' : 'mph'}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="text-nowrap">
-            <h3 className="text-sm sm:text-md font-semibold mb-2">Pressure</h3>
-            <div className="space-y-2">
-              <p className="flex items-center">
-                <Gauge className="w-5 h-5 mr-2 aspect-square text-red-400 dark:text-red-300" />
-                <span className="text-xs sm:text-sm  md:text-md text-nowrap">
-                  {currentWeather.main.pressure} hPa
-                </span>
-              </p>
-              {currentWeather.main.sea_level && (
-                <p className="flex items-center">
-                  <Waves className="w-5 h-5 mr-2 aspect-square text-blue-400 dark:text-blue-300" />
-                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">
-                    Sea Level: {currentWeather.main.sea_level} hPa
+            <div className="flex flex-col items-center">
+              <h3 className="text-sm font-semibold mb-4 text-center">Pressure</h3>
+              <div className="space-y-3 w-full">
+                <div className="flex items-center gap-2">
+                  <Gauge className="w-5 h-5 text-red-400 dark:text-red-300" />
+                  <span className="text-sm text-muted-foreground">
+                    {currentWeather.main.pressure} hPa
                   </span>
-                </p>
-              )}
-              {currentWeather.main.grnd_level && (
-                <p className="flex items-center">
-                  <Mountain className="w-5 h-5 mr-2 aspect-square text-green-400 dark:text-green-300" />
-                  <span className="text-xs sm:text-sm  md:text-md text-nowrap">
-                    Ground Level: {currentWeather.main.grnd_level} hPa
-                  </span>
-                </p>
-              )}
+                </div>
+                {currentWeather.main.sea_level && (
+                  <div className="flex items-center gap-2">
+                    <Waves className="w-5 h-5 text-blue-400 dark:text-blue-300" />
+                    <span className="text-sm text-muted-foreground">
+                      Sea Level: {currentWeather.main.sea_level} hPa
+                    </span>
+                  </div>
+                )}
+                {currentWeather.main.grnd_level && (
+                  <div className="flex items-center gap-2">
+                    <Mountain className="w-5 h-5 text-green-400 dark:text-green-300" />
+                    <span className="text-sm text-muted-foreground">
+                      Ground Level: {currentWeather.main.grnd_level} hPa
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };

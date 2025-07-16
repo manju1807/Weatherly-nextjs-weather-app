@@ -3,9 +3,6 @@ import { CurrentWeatherResponse } from '@/types/weather';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { Sun } from 'lucide-react';
@@ -34,14 +31,14 @@ const DayDuration: React.FC<DayDurationProps> = ({ data }) => {
 
   return (
     <Card className="w-full h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-2">
           <Sun className="h-4 w-4" /> Daylight Hours
-        </CardTitle>
-        <CardDescription>
+        </div>
+        <div className="text-center text-muted-foreground text-sm">
           Track the day&apos;s light cycle and solar patterns
-        </CardDescription>
-      </CardHeader>
+        </div>
+      </div>
       <CardContent className="flex flex-col justify-between">
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">

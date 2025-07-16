@@ -1,30 +1,22 @@
 'use client';
+
+import React, { useRef, useCallback, memo } from 'react';
 import dynamic from 'next/dynamic';
-import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { Input } from '@/components/ui/input';
-const ModeToggle = dynamic<unknown>(
-  () => import('../theme-toggle').then((mod) => mod.default),
-  {
-    ssr: false, // Disable SSR for this component
-  },
-);
 import { Search, MapPin } from 'lucide-react';
-import { City } from '@/types/weather';
-import { useDebounce } from '@/hooks/useDebounce';
-import LogoSvg from '@/public/svgs/logo';
-import { searchCities } from '@/actions/weatherActions';
 import { useRouter } from 'next/navigation';
+import { useWeatherStore } from '@/lib/store';
+import { useOptimizedSearch } from '@/hooks/useOptimizedSearch';
+import LogoSvg from '@/public/svgs/logo';
 
-interface NavBarProps {
-  onLocationChange: (lat: number, lon: number) => void;
-  onUseCurrentLocation: () => void;
-  isUsingCurrentLocation: boolean;
-}
+const ModeToggle = dynamic(() => import('../theme-toggle'), {
+  ssr: false,
+});
 
-// Memoize the logo component since it doesn't change
+// Memoized components for better performance
 const Logo = memo(({ onClick }: { onClick: () => void }) => (
   <div
-    className="flex-shrink-0 flex flex-row items-center justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity mr-4 md:mr-0"
+    className="shrink-0 flex flex-row items-center justify-between gap-2 cursor-pointer hover:opacity-80 transition-opacity mr-4 md:mr-0"
     onClick={onClick}
     role="button"
     tabIndex={0}
@@ -32,12 +24,11 @@ const Logo = memo(({ onClick }: { onClick: () => void }) => (
     aria-label="logo"
   >
     <LogoSvg className="w-8 h-8" fill="currentColor" />
-    <span className="text-md md:text-2xl font-bold md:font-bold ">Weatherly</span>
+    <span className="text-md md:text-2xl font-bold md:font-bold">Weatherly</span>
   </div>
 ));
 Logo.displayName = 'Logo';
 
-// Memoize the search suggestions list
 const SearchSuggestions = memo(
   ({
     suggestions,
@@ -45,9 +36,9 @@ const SearchSuggestions = memo(
     onSelect,
     onMouseEnter,
   }: {
-    suggestions: City[];
+    suggestions: Array<{ name: string; country: string; lat: number; lon: number }>;
     selectedIndex: number;
-    onSelect: (city: City) => void;
+    onSelect: (city: { name: string; country: string; lat: number; lon: number }) => void;
     onMouseEnter: (index: number) => void;
   }) => (
     <div className="absolute left-0 right-0 top-full mt-1">
@@ -83,136 +74,60 @@ const SearchSuggestions = memo(
 );
 SearchSuggestions.displayName = 'SearchSuggestions';
 
-const NavBar = ({
-  onLocationChange,
-  onUseCurrentLocation,
-  isUsingCurrentLocation,
-}: NavBarProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [error, setError] = useState<string | null>(null);
-  const [citySuggestions, setCitySuggestions] = useState<City[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-
+// NavBar is the main navigation component for the app.
+// It handles search, location selection, and navigation logic, using hooks and handlers for user interaction.
+const NavBar = memo(() => {
+  const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
 
-  // Debounced search query
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const { isManualSelection, triggerCurrentLocation } = useWeatherStore();
+  const {
+    searchQuery,
+    citySuggestions,
+    isSearching,
+    error,
+    selectedIndex,
+    setSelectedIndex,
+    handleKeyDown,
+    handleCitySelect,
+    clearSearch,
+    setSearchQuery,
+  } = useOptimizedSearch();
 
-  // Memoize handlers
+  // Memoized handlers
   const handleLogoClick = useCallback(() => {
     router.refresh();
   }, [router]);
 
-  const handleCitySelect = useCallback(
-    async (city: City) => {
-      try {
-        onLocationChange(city.lat, city.lon);
-        setSearchQuery(`${city.name}, ${city.country}`);
-        setIsOpen(false);
-        setSelectedIndex(-1);
-        setError(null);
-        inputRef.current?.blur();
-      } catch (err) {
-        console.error('Error selecting city:', err);
-        setError('Failed to fetch weather data. Please try again.');
-      }
-    },
-    [onLocationChange],
-  );
+  const handleUseCurrentLocation = useCallback(() => {
+    triggerCurrentLocation();
+    clearSearch();
+  }, [triggerCurrentLocation, clearSearch]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      switch (e.key) {
-        case 'ArrowDown':
-          e.preventDefault();
-          setSelectedIndex((prev) =>
-            prev < citySuggestions.length - 1 ? prev + 1 : prev,
-          );
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-          break;
-        case 'Enter':
-          e.preventDefault();
-          if (selectedIndex >= 0) {
-            handleCitySelect(citySuggestions[selectedIndex]);
-          }
-          break;
-        case 'Escape':
-          e.preventDefault();
-          setIsOpen(false);
-          setSelectedIndex(-1);
-          inputRef.current?.blur();
-          break;
-      }
-    },
-    [citySuggestions, selectedIndex, handleCitySelect],
-  );
-
-  // Clear search when switching to current location
-  useEffect(() => {
-    if (isUsingCurrentLocation) {
-      setSearchQuery('');
-      setCitySuggestions([]);
-      setIsOpen(false);
-      setSelectedIndex(-1);
-    }
-  }, [isUsingCurrentLocation]);
-
-  // Fetch cities effect
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchCities = async () => {
-      if (debouncedSearchQuery.length > 2) {
-        setIsSearching(true);
-        try {
-          const cities = await searchCities(debouncedSearchQuery);
-          if (isMounted) {
-            setCitySuggestions(cities);
-            setIsOpen(true);
-            setError(null);
-          }
-        } catch (err) {
-          if (isMounted) {
-            console.error('Error fetching cities:', err);
-            setError('Failed to fetch city suggestions. Please try again.');
-            setIsOpen(false);
-          }
-        } finally {
-          if (isMounted) {
-            setIsSearching(false);
-          }
-        }
-      } else {
-        setIsOpen(false);
-        setCitySuggestions([]);
-      }
-    };
-
-    fetchCities();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [debouncedSearchQuery]);
-
-  // Handle click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        setSelectedIndex(-1);
       }
-    };
+    },
+    [setSelectedIndex],
+  );
 
+  // Click outside effect
+  React.useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [handleClickOutside]);
+
+  // Clear search when switching to current location
+  React.useEffect(() => {
+    if (!isManualSelection) {
+      clearSearch();
+    }
+  }, [isManualSelection, clearSearch]);
+
+  const isOpen = citySuggestions.length > 0;
 
   return (
     <nav
@@ -247,7 +162,6 @@ const NavBar = ({
                       type="search"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      onFocus={() => setIsOpen(true)}
                       onKeyDown={handleKeyDown}
                       aria-expanded={isOpen}
                       aria-autocomplete="list"
@@ -260,19 +174,18 @@ const NavBar = ({
                     />
                   </div>
                   <button
-                    onClick={onUseCurrentLocation}
+                    onClick={handleUseCurrentLocation}
                     className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${
-                      isUsingCurrentLocation ? 'text-primary' : 'text-muted-foreground'
+                      !isManualSelection ? 'text-primary' : 'text-muted-foreground'
                     }`}
-                    aria-label={`${isUsingCurrentLocation ? 'Using current location' : 'Use current location'}`}
-                    aria-pressed={isUsingCurrentLocation}
+                    aria-label={`${!isManualSelection ? 'Using current location' : 'Use current location'}`}
+                    aria-pressed={!isManualSelection}
                   >
                     <MapPin className="h-5 w-5" aria-hidden="true" />
                   </button>
                 </div>
 
-                {/* Position dropdown absolutely relative to search container */}
-                {isOpen && citySuggestions.length > 0 && (
+                {isOpen && (
                   <div className="relative">
                     <SearchSuggestions
                       suggestions={citySuggestions}
@@ -301,6 +214,15 @@ const NavBar = ({
                     Searching...
                   </div>
                 )}
+
+                {searchQuery.length > 0 && searchQuery.length < 3 && (
+                  <div
+                    className="absolute left-0 right-0 top-full mt-1 text-muted-foreground bg-background p-2 rounded-md shadow-lg text-sm"
+                    aria-live="polite"
+                  >
+                    Enter at least 3 letters to search
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -312,6 +234,8 @@ const NavBar = ({
       </div>
     </nav>
   );
-};
+});
 
-export default memo(NavBar);
+NavBar.displayName = 'NavBar';
+
+export default NavBar;
