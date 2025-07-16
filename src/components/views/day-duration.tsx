@@ -1,9 +1,6 @@
 import React from 'react';
 import { CurrentWeatherResponse } from '@/types/weather';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { Sun } from 'lucide-react';
 

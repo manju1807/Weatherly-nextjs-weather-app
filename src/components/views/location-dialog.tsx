@@ -51,8 +51,8 @@ export const LocationPermissionDialog: React.FC<LocationPermissionDialogProps> =
               location.
               <br />
               <span className="font-medium text-blue-700">
-                After clicking &apos;Allow&apos;, your browser will ask for permission to access
-                your location. Please confirm in the browser prompt to enable
+                After clicking &apos;Allow&apos;, your browser will ask for permission to
+                access your location. Please confirm in the browser prompt to enable
                 location-based weather updates.
               </span>
             </p>
