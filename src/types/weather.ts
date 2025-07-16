@@ -1,3 +1,5 @@
+// weather.ts defines TypeScript types and interfaces for weather data, API responses, and related structures.
+// Add comments for each type/interface explaining its fields and usage.
 // types/weather.ts
 
 export interface Coordinates {

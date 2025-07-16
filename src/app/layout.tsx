@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen scroll-smooth`}
+        className={`${geistSans.variable} ${geistMono.variable} subpixel-antialiased min-h-screen scroll-smooth`}
         suppressHydrationWarning
       >
         {/* Google Analytics Scripts */}

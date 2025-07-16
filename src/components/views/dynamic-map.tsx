@@ -18,7 +18,6 @@ const DynamicMap: React.FC<DynamicMapProps> = ({
 }) => {
   const mapRef = useRef<L.Map | null>(null);
 
-  // Fix for default marker icon
   useEffect(() => {
     delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
       ._getIconUrl;
@@ -28,7 +27,7 @@ const DynamicMap: React.FC<DynamicMapProps> = ({
       shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
     });
 
-    // Cleanup function
+    // Clean up map instance on unmount
     const mapInstance = mapRef.current;
     return () => {
       if (mapInstance) {

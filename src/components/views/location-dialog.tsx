@@ -16,6 +16,8 @@ export interface LocationPermissionDialogProps {
   onDenyLocation: () => void;
 }
 
+// LocationDialog is a React component that displays a dialog for requesting location permission from the user.
+// It manages dialog state, permission handling, and user interaction.
 export const LocationPermissionDialog: React.FC<LocationPermissionDialogProps> = ({
   open,
   onOpenChange,
@@ -43,14 +45,20 @@ export const LocationPermissionDialog: React.FC<LocationPermissionDialogProps> =
         </DialogHeader>
         <div className="space-y-4 pt-4">
           <div className="flex items-start space-x-3">
-            <Navigation className="h-5 w-5 text-blue-500 mt-1 flex-shrink-0" />
+            <Navigation className="h-5 w-5 text-blue-500 mt-1 shrink-0" />
             <p className="text-sm text-gray-600">
               Enable location access for accurate weather updates based on your current
               location.
+              <br />
+              <span className="font-medium text-blue-700">
+                After clicking &apos;Allow&apos;, your browser will ask for permission to
+                access your location. Please confirm in the browser prompt to enable
+                location-based weather updates.
+              </span>
             </p>
           </div>
           <div className="flex items-start space-x-3 bg-amber-50 p-3 rounded-lg">
-            <AlertCircle className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-amber-500 mt-1 shrink-0" />
             <p className="text-sm text-amber-800">
               If you prefer not to share your location, we&apos;ll show weather for our
               default location (New York, US).

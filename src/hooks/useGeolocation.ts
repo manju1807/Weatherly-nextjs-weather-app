@@ -1,7 +1,11 @@
+// useGeolocation is a custom React hook for accessing and tracking the user's geolocation in real time.
+// It manages permission, error, and loading state, and provides up-to-date coordinates for the app.
+
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_COORDINATES } from '@/constants';
 
+// GeolocationState defines the shape of the state managed by this hook.
 interface GeolocationState {
   latitude: number;
   longitude: number;
@@ -16,16 +20,20 @@ interface GeolocationOptions {
 }
 
 /**
+ * useGeolocation
  * A custom hook that provides geolocation functionality with real-time updates
  * @param options Configuration options for the geolocation hook
  * @returns Current geolocation state including coordinates, loading status, and errors
+ *
+ * Why: This hook abstracts the browser's geolocation API, handles permission, errors, and updates,
+ * and provides a simple interface for components to access the user's location.
  */
 export function useGeolocation(options: GeolocationOptions = {}) {
   // Initialize state with default coordinates and loading status
   const [state, setState] = useState<GeolocationState>(() => ({
     latitude: DEFAULT_COORDINATES.lat,
     longitude: DEFAULT_COORDINATES.lon,
-    loading: true,
+    loading: false, // Do not set loading to true on initial mount
     error: null,
     hasPermission: false,
   }));
@@ -34,61 +42,61 @@ export function useGeolocation(options: GeolocationOptions = {}) {
   const watchId = useRef<number | null>(null);
   const isMounted = useRef(true);
 
-  // Reset isMounted on each render to prevent race conditions
-  isMounted.current = true;
-
   // Handler for successful geolocation updates
+  // Only updates state if coordinates have changed, to avoid unnecessary re-renders
   const handleSuccess = useCallback((position: GeolocationPosition) => {
     if (!isMounted.current) return;
 
     const { latitude, longitude } = position.coords;
-    setState({
-      latitude,
-      longitude,
-      loading: false,
-      error: null,
-      hasPermission: true,
+    setState((prev) => {
+      // Only update if coordinates actually changed
+      if (
+        Math.abs(prev.latitude - latitude) < 0.000001 &&
+        Math.abs(prev.longitude - longitude) < 0.000001
+      ) {
+        return prev;
+      }
+      return {
+        latitude,
+        longitude,
+        loading: false,
+        error: null,
+        hasPermission: true,
+      };
     });
   }, []);
 
-  // Handler for geolocation errors with descriptive messages
+  // Handler for geolocation errors
   const handleError = useCallback((error: GeolocationPositionError) => {
     if (!isMounted.current) return;
-
-    let errorMessage = 'Unable to retrieve your location';
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        errorMessage = 'Location permission denied';
-        break;
-      case error.POSITION_UNAVAILABLE:
-        errorMessage = 'Location information unavailable';
-        break;
-      case error.TIMEOUT:
-        errorMessage = 'Location request timed out';
-        break;
-      default:
-        errorMessage = `Unknown geolocation error: ${error.code}`;
-    }
-
-    setState((prev) => ({
-      ...prev,
+    // If permission is denied or user turns off location, fallback to default location
+    setState({
+      latitude: DEFAULT_COORDINATES.lat,
+      longitude: DEFAULT_COORDINATES.lon,
       loading: false,
-      error: errorMessage,
+      error: error.message,
       hasPermission: false,
-    }));
+    });
   }, []);
 
-  // Main effect to handle geolocation setup and cleanup
+  // Effect: sets up geolocation listeners and cleans up on unmount or option change
   useEffect(() => {
-    // Clear existing watch if options change
-    if (watchId.current !== null) {
-      navigator.geolocation.clearWatch(watchId.current);
-      watchId.current = null;
-    }
-
-    // Handle disabled state
+    // Only run geolocation logic if enabled is true
     if (!options.enabled) {
-      setState((prev) => ({ ...prev, loading: false }));
+      // If disabled, reset to default location and not loading
+      setState((prev) => ({
+        ...prev,
+        latitude: DEFAULT_COORDINATES.lat,
+        longitude: DEFAULT_COORDINATES.lon,
+        loading: false,
+        error: null,
+        hasPermission: false,
+      }));
+      // Clean up any previous watch
+      if (watchId.current !== null) {
+        navigator.geolocation.clearWatch(watchId.current);
+        watchId.current = null;
+      }
       return;
     }
 
@@ -114,7 +122,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
     setState((prev) => ({ ...prev, loading: true }));
 
     try {
-      // Get initial position
+      // Get initial position (one-time)
       navigator.geolocation.getCurrentPosition(
         handleSuccess,
         handleError,
@@ -127,8 +135,13 @@ export function useGeolocation(options: GeolocationOptions = {}) {
         handleError,
         geolocationOptions,
       );
-    } catch (error) {
-      console.error('Error setting up geolocation:', error);
+    } catch {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: 'Error setting up geolocation',
+        hasPermission: false,
+      }));
     }
 
     // Cleanup function to clear watch on unmount or options change
@@ -140,7 +153,7 @@ export function useGeolocation(options: GeolocationOptions = {}) {
     };
   }, [options.enabled, options.timeout, handleSuccess, handleError]);
 
-  // Effect to handle component unmounting
+  // Effect: marks component as unmounted to prevent state updates after unmount
   useEffect(() => {
     return () => {
       isMounted.current = false;

@@ -1,4 +1,3 @@
-// app/robots.ts
 import { siteConfig } from '@/config/siteconfig';
 import type { MetadataRoute } from 'next';
 

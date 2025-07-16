@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { CloudRain, Wind, Droplets, Gauge } from 'lucide-react';
 import { CurrentWeatherResponse, ForecastResponse } from '@/types/weather';
 import { ClearSky, Cloudy, Rainy, Sunny } from '@/public/svgs/weather';
@@ -38,7 +38,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <div className="px-6 py-2">
         {/* Location and Time Section */}
         <div className="flex justify-between items-start">
           <div className="space-y-1">
@@ -68,8 +68,8 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         </div>
 
         {/* Temperature Section */}
-        <div className="mb-10">
-          <div className="flex items-end">
+        <div className="mb-8">
+          <div className="flex items-end mb-2">
             <p className="text-8xl font-bold tracking-tighter">
               {Math.round(currentWeather.main.temp)}°
             </p>
@@ -77,7 +77,7 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
               {unit === 'metric' ? 'C' : 'F'}
             </p>
           </div>
-          <div>
+          <div className="space-y-1">
             <p className="text-xl font-semibold text-muted-foreground">
               {currentWeather.weather[0].main}
             </p>
@@ -89,34 +89,34 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
         </div>
 
         {/* Weather Details Grid */}
-        <div className="grid grid-cols-2 gap-4 w-full">
-          <div className="flex items-center ">
-            <CloudRain className="w-5 h-5 mr-2 aspect-square text-blue-400" />
-            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+        <div className="grid grid-cols-2 gap-6 w-full text-sm text-muted-foreground">
+          <div className="flex items-center">
+            <CloudRain className="w-5 h-5 mr-2 flex-shrink-0 text-blue-400" />
+            <span className="text-xs sm:text-sm text-nowrap">
               Rain Chance: {Math.round(forecast.list[0].pop * 100)}%
             </span>
           </div>
           <div className="flex items-center">
-            <Wind className="w-5 h-5 mr-2 aspect-square text-blue-400" />
-            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+            <Wind className="w-5 h-5 mr-2 flex-shrink-0 text-blue-400" />
+            <span className="text-xs sm:text-sm text-nowrap">
               Wind Speed: {Math.round(currentWeather.wind.speed)}{' '}
               {unit === 'metric' ? 'km/h' : 'mph'}
             </span>
           </div>
           <div className="flex items-center">
-            <Droplets className="w-5 h-5 mr-2 aspect-square text-blue-400" />
-            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+            <Droplets className="w-5 h-5 mr-2 flex-shrink-0 text-blue-400" />
+            <span className="text-xs sm:text-sm text-nowrap">
               Humidity: {currentWeather.main.humidity}%
             </span>
           </div>
           <div className="flex items-center">
-            <Gauge className="w-5 h-5 mr-2 aspect-square text-red-400" />
-            <span className="text-xs sm:text-sm  md:text-md text-nowrap">
+            <Gauge className="w-5 h-5 mr-2 flex-shrink-0 text-red-400" />
+            <span className="text-xs sm:text-sm text-nowrap">
               Pressure: {currentWeather.main.pressure} mb
             </span>
           </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };
