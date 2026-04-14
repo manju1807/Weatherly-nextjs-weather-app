@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Clock, CloudSnow } from 'lucide-react';
 import { ClearSky, Cloudy, Rainy, Sunny } from '@/public/svgs/weather';
+import { AppLanguage, t } from '@/lib/language/i18n';
 
 interface HourlyForecast {
   time: string;
@@ -12,11 +13,13 @@ interface HourlyForecast {
 interface HourlyForecastProps {
   forecast: HourlyForecast[];
   unit: 'metric' | 'imperial';
+  language: AppLanguage;
 }
 
 const HourlyForecast: React.FC<HourlyForecastProps> = React.memo(function HourlyForecast({
   forecast,
   unit,
+  language,
 }) {
   const getWeatherIcon = useCallback((weather: string) => {
     switch (weather.toLowerCase()) {
@@ -40,7 +43,7 @@ const HourlyForecast: React.FC<HourlyForecastProps> = React.memo(function Hourly
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
           <Clock className="h-4 w-4" />
-          Hourly Forecast
+          {t(language, 'hourlyForecast')}
         </div>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center">

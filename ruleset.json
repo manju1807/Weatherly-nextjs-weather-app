@@ -11,8 +11,8 @@
   ],
   "conditions": {
     "ref_name": {
-      "include": ["main", "develop"],
-      "exclude": ["admin/*", "owner/*"]
+      "include": [ "main", "develop" ],
+      "exclude": [ "admin/*", "owner/*" ]
     }
   },
   "rules": [
@@ -36,7 +36,7 @@
     },
     {
       "type": "required_linear_history",
-      "parameters": {}
+      "parameters": { }
     }
   ]
 }

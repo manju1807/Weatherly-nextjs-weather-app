@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useWeatherStore } from '@/lib/store';
 import { useOptimizedSearch } from '@/hooks/useOptimizedSearch';
 import LogoSvg from '@/public/svgs/logo';
+import { AppLanguage, t } from '@/lib/language/i18n';
 
 const ModeToggle = dynamic(() => import('../theme-toggle'), {
   ssr: false,
@@ -35,17 +36,20 @@ const SearchSuggestions = memo(
     selectedIndex,
     onSelect,
     onMouseEnter,
+    language,
   }: {
     suggestions: Array<{ name: string; country: string; lat: number; lon: number }>;
     selectedIndex: number;
     onSelect: (city: { name: string; country: string; lat: number; lon: number }) => void;
     onMouseEnter: (index: number) => void;
+    language: AppLanguage;
   }) => (
     <div className="absolute left-0 right-0 top-full mt-1">
       <ul
+        id="city-suggestions"
         className="w-full bg-background shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
         role="listbox"
-        aria-label="City suggestions"
+        aria-label={t(language, 'citySuggestions')}
         tabIndex={-1}
       >
         {suggestions.map((city, index) => (
@@ -81,7 +85,8 @@ const NavBar = memo(() => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { isManualSelection, triggerCurrentLocation } = useWeatherStore();
+  const { isManualSelection, triggerCurrentLocation, language, setLanguage } =
+    useWeatherStore();
   const {
     searchQuery,
     citySuggestions,
@@ -127,6 +132,18 @@ const NavBar = memo(() => {
     }
   }, [isManualSelection, clearSearch]);
 
+  React.useEffect(() => {
+    const savedLanguage = window.localStorage.getItem('weather-language');
+    if (savedLanguage === 'en' || savedLanguage === 'km') {
+      setLanguage(savedLanguage);
+    }
+  }, [setLanguage]);
+
+  React.useEffect(() => {
+    document.documentElement.lang = language === 'km' ? 'km' : 'en';
+    window.localStorage.setItem('weather-language', language);
+  }, [language]);
+
   const isOpen = citySuggestions.length > 0;
 
   return (
@@ -145,7 +162,7 @@ const NavBar = memo(() => {
                 <div className="relative flex items-center gap-2">
                   <div className="relative flex-1">
                     <label htmlFor="city-search" className="sr-only">
-                      Search for a city
+                      {t(language, 'searchForCity')}
                     </label>
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Search
@@ -158,7 +175,7 @@ const NavBar = memo(() => {
                       id="city-search"
                       name="search"
                       className="block w-full pl-10 pr-3 py-2 border border-input rounded-md leading-5 bg-background placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-                      placeholder="Search for a city..."
+                      placeholder={t(language, 'searchPlaceholder')}
                       type="search"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -170,7 +187,7 @@ const NavBar = memo(() => {
                         selectedIndex >= 0 ? `city-option-${selectedIndex}` : undefined
                       }
                       aria-busy={isSearching}
-                      aria-label="Search for a city"
+                      aria-label={t(language, 'searchForCity')}
                     />
                   </div>
                   <button
@@ -178,11 +195,29 @@ const NavBar = memo(() => {
                     className={`p-2 rounded-md hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary ${
                       !isManualSelection ? 'text-primary' : 'text-muted-foreground'
                     }`}
-                    aria-label={`${!isManualSelection ? 'Using current location' : 'Use current location'}`}
+                    aria-label={t(
+                      language,
+                      !isManualSelection ? 'usingCurrentLocation' : 'useCurrentLocation',
+                    )}
                     aria-pressed={!isManualSelection}
                   >
                     <MapPin className="h-5 w-5" aria-hidden="true" />
                   </button>
+                  <div className="hidden sm:flex items-center">
+                    <label htmlFor="language-select" className="sr-only">
+                      {t(language, 'language')}
+                    </label>
+                    <select
+                      id="language-select"
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value as AppLanguage)}
+                      className="h-10 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      aria-label={t(language, 'language')}
+                    >
+                      <option value="en">{t(language, 'english')}</option>
+                      <option value="km">{t(language, 'khmer')}</option>
+                    </select>
+                  </div>
                 </div>
 
                 {isOpen && (
@@ -192,6 +227,7 @@ const NavBar = memo(() => {
                       selectedIndex={selectedIndex}
                       onSelect={handleCitySelect}
                       onMouseEnter={setSelectedIndex}
+                      language={language}
                     />
                   </div>
                 )}
@@ -211,7 +247,7 @@ const NavBar = memo(() => {
                     className="absolute left-0 right-0 top-full mt-1 text-muted-foreground bg-background p-2 rounded-md shadow-lg"
                     aria-live="polite"
                   >
-                    Searching...
+                    {t(language, 'searching')}
                   </div>
                 )}
 
@@ -220,14 +256,29 @@ const NavBar = memo(() => {
                     className="absolute left-0 right-0 top-full mt-1 text-muted-foreground bg-background p-2 rounded-md shadow-lg text-sm"
                     aria-live="polite"
                   >
-                    Enter at least 3 letters to search
+                    {t(language, 'enterThreeLetters')}
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            <div className="sm:hidden">
+              <label htmlFor="language-select-mobile" className="sr-only">
+                {t(language, 'language')}
+              </label>
+              <select
+                id="language-select-mobile"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as AppLanguage)}
+                className="h-9 rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                aria-label={t(language, 'language')}
+              >
+                <option value="en">EN</option>
+                <option value="km">KM</option>
+              </select>
+            </div>
             <ModeToggle />
           </div>
         </div>

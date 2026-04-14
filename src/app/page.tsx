@@ -25,6 +25,7 @@ export default function WeatherApp() {
     triggerCurrentLocation, // This is a store action, not a hook. Linter may warn due to naming.
     handleLocationPermission,
     reset,
+    language,
   } = useWeatherStore();
 
   const { weatherData, error, isLoading } = useOptimizedWeather();
@@ -90,14 +91,14 @@ export default function WeatherApp() {
               className="flex-1"
             >
               <Suspense fallback={<WeatherDashboardSkeleton />}>
-                <WeatherDashboard weatherData={weatherData} unit={unit} />
+                <WeatherDashboard weatherData={weatherData} unit={unit} language={language} />
               </Suspense>
             </motion.div>
           )
         )}
       </AnimatePresence>
     );
-  }, [showSkeleton, error, weatherData, isLoading, unit]);
+  }, [showSkeleton, error, weatherData, isLoading, unit, language]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -106,6 +107,7 @@ export default function WeatherApp() {
         onOpenChange={(open) => setLocationDialog(open)}
         onAllowLocation={() => handleLocationPermissionChange(true)}
         onDenyLocation={() => handleLocationPermissionChange(false)}
+        language={language}
       />
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
@@ -116,7 +118,7 @@ export default function WeatherApp() {
       >
         <NavBar />
         {renderContent}
-        <Footer />
+        <Footer language={language} />
       </ErrorBoundary>
     </div>
   );

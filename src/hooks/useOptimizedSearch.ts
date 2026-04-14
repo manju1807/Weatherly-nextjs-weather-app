@@ -7,9 +7,11 @@ import {
   useSearchQuery,
   useCitySuggestions,
   useIsSearching,
+  useLanguage,
 } from '@/lib/store';
 import { weatherAPI } from '@/lib/api';
 import { City } from '@/types/weather';
+import { t } from '@/lib/language/i18n';
 
 // SearchCache: LRU-like cache for city search results to reduce API calls and improve performance.
 class SearchCache {
@@ -61,6 +63,7 @@ export const useOptimizedSearch = () => {
   const searchQuery = useSearchQuery();
   const citySuggestions = useCitySuggestions();
   const isSearching = useIsSearching();
+  const language = useLanguage();
   const { setSearchQuery, setCitySuggestions, setSearching } = useWeatherStore();
 
   // Ref for aborting in-flight search requests
@@ -111,7 +114,11 @@ export const useOptimizedSearch = () => {
       } catch (err) {
         if (isMountedRef.current && !abortControllerRef.current.signal.aborted) {
           console.error('Search error:', err);
-          setError(err instanceof Error ? err.message : 'Failed to search cities');
+          setError(
+            err instanceof Error && err.message
+              ? err.message
+              : t(language, 'failedToSearchCities'),
+          );
           setCitySuggestions([]);
         }
       } finally {
@@ -120,7 +127,7 @@ export const useOptimizedSearch = () => {
         }
       }
     },
-    [setCitySuggestions, setSearching],
+    [language, setCitySuggestions, setSearching],
   );
 
   // Effect: perform search when debounced query changes

@@ -13,6 +13,7 @@ interface WeatherState {
   coordinates: Coordinates;
   weatherData: WeatherData | null;
   unit: 'metric' | 'imperial';
+  language: 'en' | 'km';
 
   // UI state: controls loading, error, dialogs, and selection flags.
   isLoading: boolean;
@@ -41,6 +42,7 @@ interface WeatherState {
     suggestions: Array<{ name: string; country: string; lat: number; lon: number }>,
   ) => void;
   setSearching: (searching: boolean) => void;
+  setLanguage: (language: 'en' | 'km') => void;
 
   // Complex actions: logic for updating location, triggering geolocation, handling permissions, and resetting state.
   updateLocation: (lat: number, lon: number) => void;
@@ -54,6 +56,7 @@ const initialState = {
   coordinates: DEFAULT_COORDINATES,
   weatherData: null,
   unit: 'metric' as const,
+  language: 'en' as const,
   isLoading: false,
   error: null,
   showLocationDialog: true,
@@ -83,6 +86,7 @@ export const useWeatherStore = create<WeatherState>()(
       setSearchQuery: (query) => set({ searchQuery: query }),
       setCitySuggestions: (suggestions) => set({ citySuggestions: suggestions }),
       setSearching: (searching) => set({ isSearching: searching }),
+      setLanguage: (language) => set({ language }),
 
       // updateLocation: updates coordinates only if they have changed, and sets manual selection.
       updateLocation: (lat, lon) => {
@@ -138,6 +142,7 @@ export const useWeatherStore = create<WeatherState>()(
 // Selectors for accessing specific parts of the store for better performance and less re-rendering.
 export const useCoordinates = () => useWeatherStore((state) => state.coordinates);
 export const useWeatherData = () => useWeatherStore((state) => state.weatherData);
+export const useLanguage = () => useWeatherStore((state) => state.language);
 export const useLoading = () => useWeatherStore((state) => state.isLoading);
 export const useError = () => useWeatherStore((state) => state.error);
 export const useLocationDialog = () =>

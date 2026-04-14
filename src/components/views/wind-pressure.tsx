@@ -2,13 +2,19 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Wind, Compass, Gauge, Waves, Mountain } from 'lucide-react';
 import { CurrentWeatherResponse } from '@/types/weather';
+import { AppLanguage, t } from '@/lib/language/i18n';
 
 interface WindPressureCardProps {
   currentWeather: CurrentWeatherResponse;
   unit: 'metric' | 'imperial';
+  language: AppLanguage;
 }
 
-const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, unit }) => {
+const WindPressureCard: React.FC<WindPressureCardProps> = ({
+  currentWeather,
+  unit,
+  language,
+}) => {
   const getWindDirection = (deg: number) => {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     return directions[Math.round(deg / 45) % 8];
@@ -19,14 +25,16 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
           <Wind className="h-4 w-4" />
-          Wind & Pressure
+          {t(language, 'windAndPressure')}
         </div>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center space-y-6">
         <div className="w-full max-w-md mx-auto">
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col items-center">
-              <h3 className="text-sm font-semibold mb-4 text-center">Wind</h3>
+              <h3 className="text-sm font-semibold mb-4 text-center">
+                {t(language, 'wind')}
+              </h3>
               <div className="space-y-3 w-full">
                 <div className="flex items-center gap-2">
                   <Wind className="w-5 h-5 text-blue-400 dark:text-blue-300" />
@@ -46,7 +54,7 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
                   <div className="flex items-center gap-2">
                     <Wind className="w-5 h-5 text-blue-400 dark:text-blue-300" />
                     <span className="text-sm text-muted-foreground">
-                      Gust: {Math.round(currentWeather.wind.gust)}{' '}
+                      {t(language, 'gust')}: {Math.round(currentWeather.wind.gust)}{' '}
                       {unit === 'metric' ? 'km/h' : 'mph'}
                     </span>
                   </div>
@@ -54,7 +62,9 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
               </div>
             </div>
             <div className="flex flex-col items-center">
-              <h3 className="text-sm font-semibold mb-4 text-center">Pressure</h3>
+              <h3 className="text-sm font-semibold mb-4 text-center">
+                {t(language, 'pressure')}
+              </h3>
               <div className="space-y-3 w-full">
                 <div className="flex items-center gap-2">
                   <Gauge className="w-5 h-5 text-red-400 dark:text-red-300" />
@@ -66,7 +76,7 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
                   <div className="flex items-center gap-2">
                     <Waves className="w-5 h-5 text-blue-400 dark:text-blue-300" />
                     <span className="text-sm text-muted-foreground">
-                      Sea Level: {currentWeather.main.sea_level} hPa
+                      {t(language, 'seaLevel')}: {currentWeather.main.sea_level} hPa
                     </span>
                   </div>
                 )}
@@ -74,7 +84,7 @@ const WindPressureCard: React.FC<WindPressureCardProps> = ({ currentWeather, uni
                   <div className="flex items-center gap-2">
                     <Mountain className="w-5 h-5 text-green-400 dark:text-green-300" />
                     <span className="text-sm text-muted-foreground">
-                      Ground Level: {currentWeather.main.grnd_level} hPa
+                      {t(language, 'groundLevel')}: {currentWeather.main.grnd_level} hPa
                     </span>
                   </div>
                 )}

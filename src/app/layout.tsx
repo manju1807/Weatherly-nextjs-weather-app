@@ -2,7 +2,13 @@ import { Analytics } from '@/components/googleAnalytics';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { metadata, viewport, geistSans, geistMono } from '@/config/siteconfig';
+import {
+  metadata,
+  viewport,
+  geistSans,
+  geistMono,
+  notoSansKhmer,
+} from '@/config/siteconfig';
 import Script from 'next/script';
 import React from 'react';
 
@@ -16,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} subpixel-antialiased min-h-screen scroll-smooth`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSansKhmer.variable} subpixel-antialiased min-h-screen scroll-smooth`}
         suppressHydrationWarning
       >
         {/* Google Analytics Scripts */}
