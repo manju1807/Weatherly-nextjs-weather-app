@@ -157,6 +157,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   *,
@@ -169,15 +170,42 @@
   }
 
   html {
-    font-family:
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      sans-serif;
+    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     color-scheme: light dark;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  html[lang='km'] {
+    --font-sans: var(--font-noto-sans-khmer);
+  }
+
+  html[lang='km'],
+  html[lang='km'] body,
+  html[lang='km'] input,
+  html[lang='km'] textarea,
+  html[lang='km'] select,
+  html[lang='km'] button,
+  html[lang='km'] option,
+  html[lang='km'] label,
+  html[lang='km'] p,
+  html[lang='km'] span,
+  html[lang='km'] h1,
+  html[lang='km'] h2,
+  html[lang='km'] h3,
+  html[lang='km'] h4,
+  html[lang='km'] h5,
+  html[lang='km'] h6,
+  html[lang='km'] a,
+  html[lang='km'] li,
+  html[lang='km'] div {
+    font-family: var(--font-noto-sans-khmer), sans-serif;
+  }
+
+  html[lang='km'] body {
+    line-height: 1.75;
+    letter-spacing: 0;
   }
 
   img,

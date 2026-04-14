@@ -3,18 +3,28 @@ import { Card } from '@/components/ui/card';
 import { CloudRain, Wind, Droplets, Gauge } from 'lucide-react';
 import { CurrentWeatherResponse, ForecastResponse } from '@/types/weather';
 import { ClearSky, Cloudy, Rainy, Sunny } from '@/public/svgs/weather';
+import {
+  AppLanguage,
+  getLocale,
+  t,
+  translateWeatherCondition,
+} from '@/lib/language/i18n';
 
 interface CurrentWeatherCardProps {
   currentWeather: CurrentWeatherResponse;
   forecast: ForecastResponse;
   unit: 'metric' | 'imperial';
+  language: AppLanguage;
 }
 
 const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   currentWeather,
   forecast,
   unit,
+  language,
 }) => {
+  const locale = getLocale(language);
+
   const getWeatherIcon = (main: string) => {
     switch (main.toLowerCase()) {
       case 'clear':
@@ -39,7 +49,6 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   return (
     <Card>
       <div className="px-6 py-2">
-        {/* Location and Time Section */}
         <div className="flex justify-between items-start">
           <div className="space-y-1">
             <h2 className="text-xl font-bold tracking-tight">
@@ -47,15 +56,15 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
             </h2>
             <div className="space-y-1">
               <p className="text-xs sm:text-sm font-medium text-muted-foreground">
-                Today,{' '}
-                {new Date().toLocaleDateString('en-US', {
+                {t(language, 'today')},{' '}
+                {new Date().toLocaleDateString(locale, {
                   weekday: 'long',
                   month: 'short',
                   day: 'numeric',
                 })}
               </p>
               <p className="text-xs sm:text-sm font-medium text-muted-foreground">
-                {new Date().toLocaleTimeString('en-US', {
+                {new Date().toLocaleTimeString(locale, {
                   hour: '2-digit',
                   minute: '2-digit',
                 })}
@@ -67,52 +76,48 @@ const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
           </div>
         </div>
 
-        {/* Temperature Section */}
         <div className="mb-8">
           <div className="flex items-end mb-2">
             <p className="text-8xl font-bold tracking-tighter">
               {Math.round(currentWeather.main.temp)}°
             </p>
-            <p className="text-2xl font-bold mb-2 ml-1">
-              {unit === 'metric' ? 'C' : 'F'}
-            </p>
+            <p className="text-2xl font-bold mb-2 ml-1">{unit === 'metric' ? 'C' : 'F'}</p>
           </div>
           <div className="space-y-1">
             <p className="text-xl font-semibold text-muted-foreground">
-              {currentWeather.weather[0].main}
+              {translateWeatherCondition(language, currentWeather.weather[0].main)}
             </p>
             <p className="text-xs sm:text-sm font-medium text-muted-foreground">
-              Feels like {Math.round(currentWeather.main.feels_like)}°
+              {t(language, 'feelsLike')} {Math.round(currentWeather.main.feels_like)}°
               {unit === 'metric' ? 'C' : 'F'}
             </p>
           </div>
         </div>
 
-        {/* Weather Details Grid */}
         <div className="grid grid-cols-2 gap-6 w-full text-sm text-muted-foreground">
           <div className="flex items-center">
             <CloudRain className="w-5 h-5 mr-2 flex-shrink-0 text-blue-400" />
             <span className="text-xs sm:text-sm text-nowrap">
-              Rain Chance: {Math.round(forecast.list[0].pop * 100)}%
+              {t(language, 'rainChance')}: {Math.round(forecast.list[0].pop * 100)}%
             </span>
           </div>
           <div className="flex items-center">
             <Wind className="w-5 h-5 mr-2 flex-shrink-0 text-blue-400" />
             <span className="text-xs sm:text-sm text-nowrap">
-              Wind Speed: {Math.round(currentWeather.wind.speed)}{' '}
+              {t(language, 'windSpeed')}: {Math.round(currentWeather.wind.speed)}{' '}
               {unit === 'metric' ? 'km/h' : 'mph'}
             </span>
           </div>
           <div className="flex items-center">
             <Droplets className="w-5 h-5 mr-2 flex-shrink-0 text-blue-400" />
             <span className="text-xs sm:text-sm text-nowrap">
-              Humidity: {currentWeather.main.humidity}%
+              {t(language, 'humidity')}: {currentWeather.main.humidity}%
             </span>
           </div>
           <div className="flex items-center">
             <Gauge className="w-5 h-5 mr-2 flex-shrink-0 text-red-400" />
             <span className="text-xs sm:text-sm text-nowrap">
-              Pressure: {currentWeather.main.pressure} mb
+              {t(language, 'pressure')}: {currentWeather.main.pressure} mb
             </span>
           </div>
         </div>

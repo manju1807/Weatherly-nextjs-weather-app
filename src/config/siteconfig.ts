@@ -3,15 +3,43 @@ import localFont from 'next/font/local';
 
 // Font configurations
 export const geistSans = localFont({
-  src: '../app/fonts/GeistVF.woff',
+  src: '../app/fonts/eng/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 });
 
 export const geistMono = localFont({
-  src: '../app/fonts/GeistMonoVF.woff',
+  src: '../app/fonts/eng/GeistMonoVF.woff',
   variable: '--font-geist-mono',
   weight: '100 900',
+});
+
+export const notoSansKhmer = localFont({
+  src: [
+    { path: '../app/fonts/kh/NotoSansKhmer-Thin.ttf', weight: '100', style: 'normal' },
+    {
+      path: '../app/fonts/kh/NotoSansKhmer-ExtraLight.ttf',
+      weight: '200',
+      style: 'normal',
+    },
+    { path: '../app/fonts/kh/NotoSansKhmer-Light.ttf', weight: '300', style: 'normal' },
+    { path: '../app/fonts/kh/NotoSansKhmer-Regular.ttf', weight: '400', style: 'normal' },
+    { path: '../app/fonts/kh/NotoSansKhmer-Medium.ttf', weight: '500', style: 'normal' },
+    {
+      path: '../app/fonts/kh/NotoSansKhmer-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    { path: '../app/fonts/kh/NotoSansKhmer-Bold.ttf', weight: '700', style: 'normal' },
+    {
+      path: '../app/fonts/kh/NotoSansKhmer-ExtraBold.ttf',
+      weight: '800',
+      style: 'normal',
+    },
+    { path: '../app/fonts/kh/NotoSansKhmer-Black.ttf', weight: '900', style: 'normal' },
+  ],
+  variable: '--font-noto-sans-khmer',
+  display: 'swap',
 });
 
 // Viewport configuration

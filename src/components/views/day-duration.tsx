@@ -3,14 +3,18 @@ import { CurrentWeatherResponse } from '@/types/weather';
 import { Card, CardContent } from '@/components/ui/card';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { Sun } from 'lucide-react';
+import { AppLanguage, getLocale, t } from '@/lib/language/i18n';
 
 interface DayDurationProps {
   data: CurrentWeatherResponse;
+  language: AppLanguage;
 }
 
-const DayDuration: React.FC<DayDurationProps> = ({ data }) => {
+const DayDuration: React.FC<DayDurationProps> = ({ data, language }) => {
+  const locale = getLocale(language);
+
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleTimeString([], {
+    return new Date(timestamp * 1000).toLocaleTimeString(locale, {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -30,10 +34,10 @@ const DayDuration: React.FC<DayDurationProps> = ({ data }) => {
     <Card className="w-full h-full">
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
-          <Sun className="h-4 w-4" /> Daylight Hours
+          <Sun className="h-4 w-4" /> {t(language, 'daylightHours')}
         </div>
         <div className="text-center text-muted-foreground text-sm">
-          Track the day&apos;s light cycle and solar patterns
+          {t(language, 'lightCycleDescription')}
         </div>
       </div>
       <CardContent className="flex flex-col justify-between">
@@ -51,7 +55,7 @@ const DayDuration: React.FC<DayDurationProps> = ({ data }) => {
                 type="number"
                 domain={['dataMin', 'dataMax']}
                 tickFormatter={(time) =>
-                  new Date(time).toLocaleTimeString([], {
+                  new Date(time).toLocaleTimeString(locale, {
                     hour: '2-digit',
                     minute: '2-digit',
                   })
@@ -72,11 +76,11 @@ const DayDuration: React.FC<DayDurationProps> = ({ data }) => {
         <div className="flex justify-between text-sm mt-6">
           <div>
             <p className="font-semibold">{formatTime(data.sys.sunrise)}</p>
-            <p className="text-muted-foreground">Sunrise</p>
+            <p className="text-muted-foreground">{t(language, 'sunrise')}</p>
           </div>
           <div className="text-right">
             <p className="font-semibold">{formatTime(data.sys.sunset)}</p>
-            <p className="text-muted-foreground">Sunset</p>
+            <p className="text-muted-foreground">{t(language, 'sunset')}</p>
           </div>
         </div>
       </CardContent>

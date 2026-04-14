@@ -11,6 +11,7 @@ interface ClientMapProps {
   markerPosition: [number, number];
   popupContent: string;
   title?: string;
+  description?: string;
   icon?: React.ReactNode;
   className?: string;
 }
@@ -21,6 +22,7 @@ const ClientMap: React.FC<ClientMapProps> = React.memo(function ClientMap({
   markerPosition,
   popupContent,
   title = 'Precipitation Map',
+  description = 'Interactive precipitation and location map',
   icon = <Droplets className="mr-2" />,
   className = 'col-span-full',
 }) {
@@ -30,9 +32,7 @@ const ClientMap: React.FC<ClientMapProps> = React.memo(function ClientMap({
         <div className="flex items-center justify-center gap-2">
           {icon} {title}
         </div>
-        <div className="text-center text-muted-foreground text-sm">
-          Interactive precipitation and location map
-        </div>
+        <div className="text-center text-muted-foreground text-sm">{description}</div>
       </div>
       <CardContent className="grow relative p-0">
         <div className="absolute inset-0 p-4">
